@@ -4,7 +4,7 @@
  * 3) Обновление задачи, подзадачи и эпика
  * 4) Удаление подзадачи, эпика */
 
-import manager.Manager;
+import ru.yandex.praktikum.Manager;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -43,18 +43,19 @@ public class Main {
         System.out.println(manager.getEpicSubtasks(epicId1));
         System.out.println();
         System.out.println(manager.getEpicSubtasks(epicId2));
-        System.out.println();
+        System .out.println();
 
         manager.updateTask(new Task(taskId2, "Task 2", "Task 2, description", "DONE"));
         System.out.println(manager.getTask(2));
         System.out.println();
-
-        manager.updateEpic(new Epic(epicId2, "Epic 2", "Epic 2, description", "DONE"));
+        epic2.setName("Epic 2.1");
+        epic2.setStatus("DONE"); // проверка, что при ручном изменении статуса, итоговый статус эпика будет рассчитываться по статусу его подзадач
+        manager.updateEpic(epic2);
         System.out.println(manager.getEpic(epicId2));
         System.out.println(manager.getEpicSubtasks(epicId2));
         System.out.println();
 
-        manager.updateSubtask(new Subtask(subtaskId3, "Subtask 3", "Subtask 3, description", "NEW", epicId2));
+        manager.updateSubtask(new Subtask(subtaskId3, "Subtask 3", "Subtask 3, description", "DONE", epicId2));
         System.out.println(manager.getEpic(epicId2));
         System.out.println(manager.getEpicSubtasks(epicId2));
         System.out.println();
@@ -68,6 +69,7 @@ public class Main {
         System.out.println(manager.getEpic(epicId2));
         System.out.println(manager.getEpics());
         System.out.println(manager.getSubtasks());
+        System.out.println();
 
     }
 }

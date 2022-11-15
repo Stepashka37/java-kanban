@@ -2,7 +2,7 @@
  * @see com.sun.tools.javac.Main
  *  */
 
-package manager;
+package ru.yandex.praktikum;
 
 import tasks.Epic;
 import tasks.Subtask;
@@ -171,18 +171,10 @@ public class Manager {
         tasks.put(task.getId(), task);
     }
 
-    /** Метод обновления эпика. Попытался реализовать логику для смены статуса подзадач при смене статуса
-     *  эпика - например, если статус эпика меняется на DONE, то и подзадачи тоже DONE.
-     *  */
+    /** Метод обновления эпика */
     public void updateEpic(Epic epic) { //
-        List<Integer> subtaskIds = epics.get(epic.getId()).getSubtasksId();
         epics.put(epic.getId(), epic);
-        if (epic.getStatus().equals("DONE") || epic.getStatus().equals("NEW")) {
-            epics.get(epic.getId()).setSubtasksId(subtaskIds);
-            for (int i : getEpic(epic.getId()).getSubtasksId()) {
-                subtasks.get(i).setStatus(epic.getStatus());
-            }
-        }
+        calculateEpicStatus(epic);
     }
 
     /** Метод определения статуса эпика  */
