@@ -2,7 +2,7 @@
  * @see manager.Manager
  *  */
 
-package tasks;
+package ru.yandex.praktikum.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +37,8 @@ public class Epic extends Task {
     public void setSubtasksId(List<Integer> subtasksId) {
         this.subtasksId = subtasksId;
     }
+
+
 
 
     @Override

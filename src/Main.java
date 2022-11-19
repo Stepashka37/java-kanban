@@ -5,9 +5,9 @@
  * 4) Удаление подзадачи, эпика */
 
 import ru.yandex.praktikum.Manager;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import ru.yandex.praktikum.tasks.Epic;
+import ru.yandex.praktikum.tasks.Subtask;
+import ru.yandex.praktikum.tasks.Task;
 
 
 public class Main {

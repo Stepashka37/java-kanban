@@ -2,7 +2,7 @@
  * @see manager.Manager
  *  */
 
-package tasks;
+package ru.yandex.praktikum.tasks;
 
 
 public class Task {
@@ -60,11 +60,13 @@ public class Task {
 
     @Override
     public String toString() {
-        return "tasks.Task{" +
+        return "ru.yandex.praktikum.tasks.Task{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", status='" + status + '\'' +
                 ", description='" + description + '\'' +
                 "}";
     }
+
+
 }

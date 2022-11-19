@@ -1,12 +1,11 @@
 /** Класс описывающий основную логику Трекера Задач.
- * @see com.sun.tools.javac.Main
  *  */
 
 package ru.yandex.praktikum;
 
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import ru.yandex.praktikum.tasks.Epic;
+import ru.yandex.praktikum.tasks.Subtask;
+import ru.yandex.praktikum.tasks.Task;
 
 import java.util.*;
 
@@ -44,12 +43,13 @@ public class Manager {
      * Реализована логика проверки, есть ли эпик по указанному epicId
      * @return - id созданной подзадачи */
     public Integer createSubtask(Subtask subtask) {
-        final int id = ++genId;
-        if (epics.get(subtask.getEpicId()) != null) {
+        Epic epic = epics.get(subtask.getEpicId());
+        if (epic != null) {
+            final int id = ++genId;
             subtask.setId(id);
             subtasks.put(id, subtask);
-            epics.get(subtask.getEpicId()).addSubtaskId(id);
-            calculateEpicStatus(getEpic(subtask.getEpicId()));
+            epic.addSubtaskId(id);
+            calculateEpicStatus(epic);
             return id;
         } else {
             System.out.println("Такого эпика нет!");
@@ -157,9 +157,10 @@ public class Manager {
     public void deleteSubtask(int id) {
         if (subtasks.containsKey(id)) {
             int epicsId = subtasks.get(id).getEpicId();
+            Epic epic = getEpic(epicsId);
             subtasks.remove(id);
-            getEpic(epicsId).removeSubtask(id);
-            calculateEpicStatus(getEpic(epicsId));
+            epic.removeSubtask(id);
+            calculateEpicStatus(epic);
         } else {
             System.out.println("Подзадачи с таким id нет");
             return;

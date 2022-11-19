@@ -1,7 +1,7 @@
 /** Класс описывающий подзадачу
  * @see manager.Manager
  *  */
-package tasks;
+package ru.yandex.praktikum.tasks;
 
 public class Subtask extends Task {
     protected int epicId;
