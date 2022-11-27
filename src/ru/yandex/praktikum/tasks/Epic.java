@@ -1,6 +1,8 @@
-/** Класс описывающий эпик
+/**
+ * Класс описывающий эпик
+ *
  * @see manager.Manager
- *  */
+ */
 
 package ru.yandex.praktikum.tasks;
 
@@ -10,11 +12,11 @@ import java.util.List;
 public class Epic extends Task {
     protected List<Integer> subtasksId = new ArrayList<>();
 
-    public Epic(int id, String name, String description, String status) {
+    public Epic(int id, String name, String description, TaskStatus status) {
         super(id, name, description, status);
     }
 
-    public Epic(String name, String description, String status) {
+    public Epic(String name, String description, TaskStatus status) {
         super(name, description, status);
     }
 
@@ -39,11 +41,9 @@ public class Epic extends Task {
     }
 
 
-
-
     @Override
     public String toString() {
-        return "task.Epic{" +
+        return "Epic{" +
                 "name='" + name + '\'' +
                 ", subtasksId=" + subtasksId +
                 ", status='" + status + '\'' +

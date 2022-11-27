@@ -1,6 +1,8 @@
-/** Класс описывающий задачу
+/**
+ * Класс описывающий задачу
+ *
  * @see manager.Manager
- *  */
+ */
 
 package ru.yandex.praktikum.tasks;
 
@@ -10,16 +12,16 @@ public class Task {
     protected String name;
     protected String description;
     protected int id;
-    protected String status;
+    protected TaskStatus status;
 
-    public Task(int id, String name, String description, String status) {
+    public Task(int id, String name, String description, TaskStatus status) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
-    public Task(String name, String description, String status) {
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
@@ -49,18 +51,18 @@ public class Task {
         this.id = id;
     }
 
-    public String getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 
 
     @Override
     public String toString() {
-        return "ru.yandex.praktikum.tasks.Task{" +
+        return "Task{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", status='" + status + '\'' +
