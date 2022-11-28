@@ -27,10 +27,13 @@ public interface TaskManager {
      * @return - id созданного эпика */
     int createEpic(Epic epic);
 
-    /** Методы для создания подзадач. В качестве паараметра передается объект
+    /**
+     * Методы для создания подзадач. В качестве паараметра передается объект
      * Реализована логика проверки, есть ли эпик по указанному epicId
-     * @return - id созданной подзадачи */
-    Integer createSubtask(Subtask subtask);
+     *
+     * @return - id созданной подзадачи
+     */
+    int createSubtask(Subtask subtask);
 
     /** Метод для получения задачи по id, реализована логика проверки, есть ли такая задача в мапе */
     Task getTask(int id);
@@ -76,9 +79,6 @@ public interface TaskManager {
 
     /** Метод обновления эпика */
     void updateEpic(Epic epic);
-
-    /** Метод определения статуса эпика  */
-    void calculateEpicStatus(Epic epic);
 
     /** Метод обновления подзадачи. Реализиована логика проверки наличия. При обновлении подзадачи пересчитывается статус эпика */
     void updateSubtask(Subtask subtask);

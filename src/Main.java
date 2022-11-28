@@ -60,15 +60,17 @@ public class Main {
         manager.getTask(2);
         manager.getEpic(3);
         manager.getEpic(4);
+        manager.getEpic(12);
+        manager.getEpic(13);
         manager.getSubtask(5);
         manager.getSubtask(6);
+        manager.getSubtask(10);
+        manager.getSubtask(11);
         manager.getSubtask(7);
         manager.getSubtask(8);
         manager.getSubtask(9);
-        manager.getSubtask(10);
-        manager.getSubtask(11);
-        manager.getEpic(12);
-        manager.getEpic(13);
+
+
 
         List<Task> history = manager.getHistory();
         for (Task task : history) {

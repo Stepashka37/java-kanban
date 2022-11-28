@@ -23,14 +23,28 @@ public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
-    private HistoryManager historyManager = new Managers().getDefaultHistory();
+    private HistoryManager historyManager = Managers.getDefaultHistory();
+    private List<Task> history = new ArrayList<>();
 
 
     /** Метод для вывода истории просмотров
      * @return - список последних 10 просмотренных задач */
     public List<Task> getHistory() {
-        return historyManager.getHistory();
-    }
+
+        for (Integer i : historyManager.getHistory()) {
+            if (tasks.containsKey(i)) {
+                history.add(tasks.get(i));
+            } else if (epics.containsKey(i)) {
+                history.add(epics.get(i));
+            } else if (subtasks.containsKey(i)) {
+                history.add(subtasks.get(i));
+            } else {
+                System.out.println("Объекта с таким id нет");
+            }
+        }
+            return history;
+        }
+
 
     /** Метод для создания задач. В качестве паараметра передается объект
      * @return - id созданной задачи */
@@ -52,11 +66,14 @@ public class InMemoryTaskManager implements TaskManager {
         return id;
     }
 
-    /** Метод для создания подзадач. В качестве паараметра передается объект
+    /**
+     * Метод для создания подзадач. В качестве паараметра передается объект
      * Реализована логика проверки, есть ли эпик по указанному epicId
-     * @return - id созданной подзадачи */
+     *
+     * @return - id созданной подзадачи
+     */
     @Override
-    public Integer createSubtask(Subtask subtask) {
+    public int createSubtask(Subtask subtask) {
         Epic epic = epics.get(subtask.getEpicId());
         if (epic != null) {
             final int id = ++genId;
@@ -78,7 +95,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Нет задачи с таким id");
         }
         final Task task = tasks.get(id);
-        historyManager.add(task);
+        historyManager.add(id);
         return task;
     }
 
@@ -89,7 +106,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Нет эпика с таким id");
         }
         final Epic epic = epics.get(id);
-        historyManager.add(epic);
+        historyManager.add(id);
         return epic;
     }
 
@@ -100,7 +117,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Нет подзадачи с таким id");
         }
         final Subtask subtask = subtasks.get(id);
-        historyManager.add(subtask);
+        historyManager.add(id);
         return subtask;
     }
 
@@ -213,7 +230,7 @@ public class InMemoryTaskManager implements TaskManager {
         calculateEpicStatus(epic);
     }
 
-    @Override
+
     /** Метод определения статуса эпика  */
     public void calculateEpicStatus(Epic epic) {
         Set<TaskStatus> status = new HashSet<>();
@@ -243,5 +260,7 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
     }
+
+
 
 }

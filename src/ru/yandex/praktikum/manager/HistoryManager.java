@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface HistoryManager {
 
-    List<Task> getHistory();
+    List<Integer> getHistory();
 
-    void add(Task task);
+    void add(int id);
 }
