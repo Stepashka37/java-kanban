@@ -12,7 +12,9 @@ import java.util.List;
 
 public interface HistoryManager {
 
-    List<Integer> getHistory();
+    CustomLinkedList<Integer> getHistory();
 
     void add(int id);
+
+    void remove(int id);
 }

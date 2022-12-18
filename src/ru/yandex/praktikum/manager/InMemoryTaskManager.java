@@ -31,7 +31,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @return - список последних 10 просмотренных задач */
     public List<Task> getHistory() {
 
-        for (Integer i : historyManager.getHistory()) {
+        for (Integer i : historyManager.getHistory().getTasks()) {
             if (tasks.containsKey(i)) {
                 history.add(tasks.get(i));
             } else if (epics.containsKey(i)) {
@@ -39,7 +39,7 @@ public class InMemoryTaskManager implements TaskManager {
             } else if (subtasks.containsKey(i)) {
                 history.add(subtasks.get(i));
             } else {
-                System.out.println("Объекта с таким id нет");
+                System.out.println("Объекта с id " + i +  " нет или он был удален");
             }
         }
             return history;
@@ -181,6 +181,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteTask(int id) {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
+            historyManager.remove(id);
         } else {
             System.out.println("Задачи с таким id нет");
             return;
@@ -193,9 +194,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.containsKey(id)) {
             for (int subsId : getEpic(id).getSubtasksId()) {
                 subtasks.remove(subsId);
+                historyManager.remove(subsId);
             }
-            getEpic(id).clearSubtasksId();
+            epics.get(id).clearSubtasksId();
             epics.remove(id);
+            historyManager.remove(id);
         } else {
             System.out.println("Эпика с таким id нет");
             return;
@@ -207,9 +210,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtask(int id) {
         if (subtasks.containsKey(id)) {
             int epicsId = subtasks.get(id).getEpicId();
-            Epic epic = getEpic(epicsId);
+            Epic epic = epics.get(epicsId); //тут поправил
             subtasks.remove(id);
             epic.removeSubtask(id);
+            historyManager.remove(id);
             calculateEpicStatus(epic);
         } else {
             System.out.println("Подзадачи с таким id нет");
