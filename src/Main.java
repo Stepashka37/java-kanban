@@ -47,17 +47,18 @@ public class Main {
         manager.getSubtask(5);
         manager.getSubtask(6);
         manager.getSubtask(7);
-        manager.getTask(1);
-        manager.getSubtask(6);
+        manager.getSubtask(7);
+
 
         List<Task> history1 = manager.getHistory();
         for (Task task : history1) {
             System.out.println(task);
         }
 
-        /** Проверка на то, что при удалении задачи она не будет показана в истории  */
+       /** Проверка на то, что при удалении задачи она не будет показана в истории  */
         System.out.println();
         manager.getHistory().clear();
+
         manager.getTask(1);
         manager.getSubtask(5);
         manager.getSubtask(6);
@@ -83,9 +84,6 @@ public class Main {
         for (Task task : history3) {
             System.out.println(task);
         }
-
-
-
 
     }
 }

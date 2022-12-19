@@ -31,15 +31,16 @@ public class InMemoryTaskManager implements TaskManager {
      * @return - список последних 10 просмотренных задач */
     public List<Task> getHistory() {
 
-        for (Integer i : historyManager.getHistory().getTasks()) {
-            if (tasks.containsKey(i)) {
-                history.add(tasks.get(i));
-            } else if (epics.containsKey(i)) {
-                history.add(epics.get(i));
-            } else if (subtasks.containsKey(i)) {
-                history.add(subtasks.get(i));
+        for (Task task : historyManager.getHistory()) {
+            int taskId = task.getId();
+            if (tasks.containsKey(taskId)) {
+                history.add(task);
+            } else if (epics.containsKey(taskId)) {
+                history.add(task);
+            } else if (subtasks.containsKey(taskId)) {
+                history.add(task);
             } else {
-                System.out.println("Объекта с id " + i +  " нет или он был удален");
+                System.out.println("Объекта с id " + taskId +  " нет или он был удален");
             }
         }
             return history;
@@ -95,7 +96,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Нет задачи с таким id");
         }
         final Task task = tasks.get(id);
-        historyManager.add(id);
+        historyManager.add(task);
         return task;
     }
 
@@ -106,7 +107,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Нет эпика с таким id");
         }
         final Epic epic = epics.get(id);
-        historyManager.add(id);
+        historyManager.add(epic);
         return epic;
     }
 
@@ -117,7 +118,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Нет подзадачи с таким id");
         }
         final Subtask subtask = subtasks.get(id);
-        historyManager.add(id);
+        historyManager.add(subtask);
         return subtask;
     }
 

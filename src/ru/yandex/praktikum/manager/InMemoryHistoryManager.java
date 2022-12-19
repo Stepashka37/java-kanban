@@ -7,7 +7,6 @@
 package ru.yandex.praktikum.manager;
 
 import ru.yandex.praktikum.tasks.Task;
-import ru.yandex.praktikum.manager.Node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,90 +14,115 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @history - список 10 последних просмотренных задач
+ * @history - список просмотренных задач
  */
 public class InMemoryHistoryManager implements HistoryManager {
-    
-    private CustomLinkedList<Integer> history = new CustomLinkedList<>();
+
+    private CustomLinkedList<Task> history = new CustomLinkedList<>();
+    private Map<Integer, Node> idAndNode = new HashMap<>();
+
 
     /**
      * Метод для вывода списка просмотренных задач
      */
     @Override
-    public CustomLinkedList<Integer> getHistory() {
-        return history;
+    public List<Task> getHistory() {
+        return history.getTasks();
     }
+
 
     /**
      * Метод для добавления задачи в список просмотренных, внутри реализована логика проверки, есть ли данная задача в
-     * в списке. Если есть - узел имеющейся задачи вырезается, удаляется из allTasks, и заново добавлляется в конец списка
+     * в списке (есть ли элемент в мапе). Если есть - узел имеющейся задачи вырезается и заново добавлляется в конец списка
      */
     @Override
-    public void add(int id) {
-        if (history.getIdAndNode().containsKey(id)) {
-            Node nodeToRemove = history.getIdAndNode().get(id);
-            history.removeNode(nodeToRemove);
-            history.getTasks().remove((Integer) id);
-            history.linkLast(id);
-        } else {
-            history.linkLast(id);
+    public void add(Task task) {
+        Node node = idAndNode.get(task.getId());
+        if (node != null) {
+            history.removeNode(node);
         }
+        history.linkLast(task);
+        idAndNode.put(task.getId(), history.getTail());
     }
 
+
     /**
-     * Метод для удаления задачи из списка - вырезается узел, удаляется пара ключ-значения в хеш-таблице, удаляется
-     * элемент из списка allTasks
+     * Метод для удаления задачи из списка - вырезается узел, удаляется пара ключ-значения в хеш-таблице
      */
     public void remove(int id) {
-        Node toRemove = history.getIdAndNode().get(id);
-        history.removeNode(toRemove);
-        history.getIdAndNode().remove(id);
-        history.getTasks().remove((Integer) id);
+        Node node = idAndNode.get(id);
+        if (idAndNode.containsKey(id)) {
+            history.removeNode(node);
+            idAndNode.remove(id);
+        }
     }
 }
 
-/** Класс реализующий структуру данных связный список. Помимо полей головы, хвоста и размера, есть поле встроенной мапы
- *  для быстрого поиска узла по айди элемента, а также обычный ArrayList для вывода айди всех элементов связного списка  */
+
+/**
+ * Класс реализующий структуру данных связный список
+ */
 class CustomLinkedList<T> {
-    private Node<T> head;
-    private Node<T> tail;
+    private Node head;
+    private Node tail;
     private int size = 0;
-    private List<Integer> allTasks = new ArrayList<>();
-    private Map<Integer, Node> idAndNode = new HashMap<>();
 
-
-    public Map<Integer, Node> getIdAndNode() {
-        return idAndNode;
+    public Node getTail() {
+        return tail;
     }
 
-    /** Метод для добавления айди задачи в конец связного списка. При этом, айди добавляется также в мапу и allTasks */
-    public void linkLast(Integer id) {
-        Node<T> oldTail = tail;
-        Node<T> newNode = new Node<>(oldTail, id, null);
+
+    /**
+     * Метод для добавления  задачи в конец связного списка. При этом, задача добавляется также в мапу
+     */
+    public void linkLast(Task task) {
+        Node oldTail = tail;
+        Node newNode = new Node(oldTail, task, null);
         tail = newNode;
         if (oldTail == null) {
             head = newNode;
         } else {
             oldTail.next = newNode;
         }
-        allTasks.add(id);
-        idAndNode.put(id, tail);
-        size++;
+        this.size++;
     }
+
+
+    /**
+     * Метод для сохранения всех задач в ArrayList. Производится проход по всем нодам связного списка и сохранения задач
+     * из них
+     */
+    public List<Task> getTasks() {
+        List<Task> allTasks = new ArrayList<>();
+        Node node = head;
+        while (node != null) {
+            allTasks.add(node.data);
+            node = node.next;
+        }
+        return allTasks;
+    }
+
 
     public int size() {
         return this.size;
     }
 
-    public List<Integer> getTasks() {
-        return allTasks;
-    }
 
-    /** Метод для вырезания узла связного списка */
+    /**
+     * Метод для вырезания узла связного списка. Реализована логика для 3 случаев: вырезание головы, вырезание из середины
+     * и вырезание из хвоста списка
+     */
     public void removeNode(Node node) {
-        node = null;
+        if (node.prev == null) {
+            head = node.next;
+            node.next.prev = null;
+        } else if (node.next == null) {
+            tail = node.prev;
+            node.prev.next = null;
+        } else {
+            node.next.prev = node.prev;
+            node.prev.next = node.next;
+        }
         this.size--;
     }
-
-
 }

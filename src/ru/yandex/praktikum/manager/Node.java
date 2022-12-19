@@ -2,12 +2,14 @@
 
 package ru.yandex.praktikum.manager;
 
-public class Node <T> {
-    public Integer data;
-    public Node<T> next;
-    public Node<T> prev;
+import ru.yandex.praktikum.tasks.Task;
 
-    public Node(Node<T> prev, Integer data, Node<T> next) {
+public class Node  {
+    public Task data;
+    public Node next;
+    public Node prev;
+
+    public Node(Node prev, Task data, Node next) {
         this.data = data;
         this.next = next;
         this.prev = prev;
