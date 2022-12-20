@@ -41,8 +41,8 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (node != null) {
             history.removeNode(node);
         }
-        history.linkLast(task);
-        idAndNode.put(task.getId(), history.getTail());
+        Node newNode = history.linkLast(task);
+        idAndNode.put(task.getId(), newNode);
     }
 
 
@@ -51,7 +51,7 @@ public class InMemoryHistoryManager implements HistoryManager {
      */
     public void remove(int id) {
         Node node = idAndNode.get(id);
-        if (idAndNode.containsKey(id)) {
+        if (node != null) {
             history.removeNode(node);
             idAndNode.remove(id);
         }
@@ -75,7 +75,7 @@ class CustomLinkedList<T> {
     /**
      * Метод для добавления  задачи в конец связного списка. При этом, задача добавляется также в мапу
      */
-    public void linkLast(Task task) {
+    public Node linkLast(Task task) {
         Node oldTail = tail;
         Node newNode = new Node(oldTail, task, null);
         tail = newNode;
@@ -85,6 +85,7 @@ class CustomLinkedList<T> {
             oldTail.next = newNode;
         }
         this.size++;
+        return tail;
     }
 
 
@@ -113,7 +114,9 @@ class CustomLinkedList<T> {
      * и вырезание из хвоста списка
      */
     public void removeNode(Node node) {
-        if (node.prev == null) {
+        if (node.next == null && node.prev == null) {
+            return;
+        } else if (node.prev == null) {
             head = node.next;
             node.next.prev = null;
         } else if (node.next == null) {

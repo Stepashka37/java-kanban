@@ -59,11 +59,12 @@ public class Main {
         System.out.println();
         manager.getHistory().clear();
 
-        manager.getTask(1);
         manager.getSubtask(5);
         manager.getSubtask(6);
         manager.getSubtask(7);
+        manager.getTask(1);
         manager.deleteTask(1);
+
 
         List<Task> history2 = manager.getHistory();
         for (Task task : history2) {
@@ -74,11 +75,13 @@ public class Main {
         System.out.println();
         manager.getHistory().clear();
         manager.getEpic(4);
-        manager.getEpic(3);
+
         manager.getSubtask(5);
         manager.getSubtask(6);
         manager.getSubtask(7);
+        manager.getEpic(3);
         manager.deleteEpic(3);
+
 
         List<Task> history3 = manager.getHistory();
         for (Task task : history3) {
