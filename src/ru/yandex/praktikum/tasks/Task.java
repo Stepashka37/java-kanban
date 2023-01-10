@@ -13,6 +13,7 @@ public class Task {
     protected String description;
     protected int id;
     protected TaskStatus status;
+    protected TaskType type = TaskType.TASK;
 
     public Task(int id, String name, String description, TaskStatus status) {
         this.id = id;
@@ -59,6 +60,13 @@ public class Task {
         this.status = status;
     }
 
+    public TaskType getType() {
+        return type;
+    }
+
+    public void setType(TaskType type) {
+        this.type = type;
+    }
 
     @Override
     public String toString() {
@@ -69,6 +77,4 @@ public class Task {
                 ", description='" + description + '\'' +
                 "}";
     }
-
-
 }

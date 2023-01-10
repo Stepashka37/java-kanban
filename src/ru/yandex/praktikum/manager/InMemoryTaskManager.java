@@ -20,11 +20,11 @@ public class InMemoryTaskManager implements TaskManager {
      * @historyManager - объект класса InMemoryHistoryManager типа HistoryManager
      *  */
     private int genId = 0;
-    private HashMap<Integer, Task> tasks = new HashMap<>();
-    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private HashMap<Integer, Epic> epics = new HashMap<>();
-    private HistoryManager historyManager = Managers.getDefaultHistory();
-    private List<Task> history = new ArrayList<>();
+    HashMap<Integer, Task> tasks = new HashMap<>();
+    HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    HashMap<Integer, Epic> epics = new HashMap<>();
+    HistoryManager historyManager = Managers.getDefaultHistory();
+    List<Task> history = new ArrayList<>();
 
 
     /** Метод для вывода истории просмотров

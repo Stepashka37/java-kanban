@@ -7,6 +7,7 @@ package ru.yandex.praktikum.tasks;
 
 public class Subtask extends Task {
     protected int epicId;
+    protected TaskType type = TaskType.SUBTASK;
 
     public Subtask(int id, String name, String description, TaskStatus status, int epicId) {
         super(id, name, description, status);
@@ -20,6 +21,11 @@ public class Subtask extends Task {
 
     public int getEpicId() {
         return epicId;
+    }
+
+    @Override
+    public TaskType getType() {
+        return type;
     }
 
     @Override
