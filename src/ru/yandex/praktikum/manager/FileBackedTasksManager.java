@@ -4,10 +4,7 @@
 
 package ru.yandex.praktikum.manager;
 
-import ru.yandex.praktikum.tasks.Epic;
-import ru.yandex.praktikum.tasks.Subtask;
-import ru.yandex.praktikum.tasks.Task;
-import ru.yandex.praktikum.tasks.TaskStatus;
+import ru.yandex.praktikum.tasks.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,25 +21,24 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     private File file;
 
     FileBackedTasksManager(File file) throws IOException {
-        if (file.exists()) {
             this.file = file;
-        } else {
-            System.out.println("Такого файла не существует");
-        }
+    }
+
+    FileBackedTasksManager(){
     }
 
     /**
      * Метод для имитации записи данных из менеджера в файл и воссоздания менеджера из файла
      */
     public static void main(String[] args) throws IOException {
-        FileBackedTasksManager toFile = new FileBackedTasksManager(new File("C:\\Users\\1\\dev\\java-kanban\\src\\savedManager.csv"));
+        FileBackedTasksManager toFile = new FileBackedTasksManager(new File("savedManager.csv"));
         Task task1 = new Task("Task 1", "Task 1 description", TaskStatus.NEW);
         Task task2 = new Task("Task 2", "Task 2 description", TaskStatus.IN_PROGRESS);
         final int taskId1 = toFile.createTask(task1);
         final int taskId2 = toFile.createTask(task2);
 
 
-        Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
+        Epic epic1 = new Epic("Epic 1",  "Epic 1 description", TaskStatus.NEW);
         Epic epic2 = new Epic("Epic 2", "Epic 2 description", TaskStatus.NEW);
         final int epicId1 = toFile.createEpic(epic1);
         final int epicId2 = toFile.createEpic(epic2);
@@ -63,7 +59,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         toFile.getSubtask(7);
         toFile.getSubtask(5);
 
-        FileBackedTasksManager fromFile = loadFromFile(new File("C:\\Users\\1\\dev\\java-kanban\\src\\savedManager.csv"));
+        FileBackedTasksManager fromFile = loadFromFile(new File("savedManager.csv"));
         System.out.println(fromFile.getTasks());
         System.out.println();
         System.out.println(fromFile.getEpics());
@@ -80,9 +76,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         String[] array = value.split(",");
         Task taskToReturn = new Task(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]));
 
-        if (array[1].equals("EPIC")) {
+        if (array[1].equals(TaskType.EPIC.name())) {
             taskToReturn = new Epic(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]));
-        } else if (array[1].equals("SUBTASK")) {
+        } else if (array[1].equals(TaskType.SUBTASK.name())) {
             taskToReturn = new Subtask(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]),
                     Integer.parseInt(array[5]));
         }
@@ -99,7 +95,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 "," + task.getStatus() +
                 "," + task.getDescription();
 
-        if (task instanceof Subtask) {
+        if (task.getType().equals(TaskType.SUBTASK)) {
             str = ((Subtask) task).getId() +
                     "," + ((Subtask) task).getType() +
                     "," + ((Subtask) task).getName() +
@@ -140,7 +136,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
      * и записывает в файл элементы каждой из них и затем записывает айди задач из истории просмотров
      */
     public void save() throws ManagerSaveException {
-        try (Writer fileWriter = new FileWriter(file);) {
+        try (Writer fileWriter = new FileWriter(file)) {
 
             fileWriter.write("id,type,name,status,description,epic\n");
             for (Integer id : tasks.keySet()) {
@@ -170,6 +166,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
      * в историю)
      */
     public static FileBackedTasksManager loadFromFile(File file) throws IOException {
+        if (file.exists()) {
         String absolutePath = file.getAbsolutePath();
         FileBackedTasksManager managerFromFile = new FileBackedTasksManager(file);
         String fileToString = Files.readString(Paths.get(absolutePath)); //весь файл преобразован в одну строку
@@ -186,13 +183,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
         for (int i = 0; i < tasksSeparately.length; i++) {
             String[] task = tasksSeparately[i].split(",");
-            if (task[1].equals("TASK")) {
+            if (task[1].equals(TaskType.TASK.name())) {
                 Task taskGen = fromString(tasksSeparately[i]);
                 managerFromFile.tasks.put(taskGen.getId(), taskGen);
-            } else if (task[1].equals("EPIC")) {
+            } else if (task[1].equals(TaskType.EPIC.name())) {
                 Epic epicGen = (Epic) fromString(tasksSeparately[i]);
                 managerFromFile.epics.put(epicGen.getId(), epicGen);
-            } else if (task[1].equals("SUBTASK")) {
+            } else if (task[1].equals(TaskType.SUBTASK.name())) {
                 Subtask subtaskGen = (Subtask) fromString(tasksSeparately[i]);
                 managerFromFile.subtasks.put(subtaskGen.getId(), subtaskGen);
             }
@@ -212,7 +209,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 System.out.println("Объекта с id " + id + " нет или он был удален");
             }
         }
-        return managerFromFile;
+            return managerFromFile;
+        } else {
+            System.out.println("Такого файла не существует");
+            return null;
+        }
     }
 
 

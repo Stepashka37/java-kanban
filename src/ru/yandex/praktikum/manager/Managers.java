@@ -7,7 +7,7 @@ public class Managers {
 
     /** Метод для создания нового объекта класса InMemoryTaskManager */
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+        return new FileBackedTasksManager();
     }
 
     /** Метод для создания нового объекта класса InMemoryHistoryManager */
