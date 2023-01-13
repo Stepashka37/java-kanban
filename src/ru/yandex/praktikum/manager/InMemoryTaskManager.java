@@ -19,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
      * @genId = генерируемый id
      * @historyManager - объект класса InMemoryHistoryManager типа HistoryManager
      *  */
-    private int genId = 0;
+    protected int genId = 0;
     HashMap<Integer, Task> tasks = new HashMap<>();
     HashMap<Integer, Subtask> subtasks = new HashMap<>();
     HashMap<Integer, Epic> epics = new HashMap<>();
@@ -266,6 +266,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-
-
+    public void setGenId(int genId) {
+        this.genId = genId;
+    }
 }
