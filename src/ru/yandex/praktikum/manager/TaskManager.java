@@ -15,6 +15,8 @@ import java.util.List;
 
 public interface TaskManager {
 
+    List<Task> getPrioritizedTasks();
+
     /** Метод для вывода истории просмотров
      * @return - список последних 10 просмотренных задач */
     List<Task> getHistory();
@@ -53,8 +55,10 @@ public interface TaskManager {
     /** Метод получения всех подзадач */
     ArrayList<Subtask> getSubtasks();
 
-    /** Метод получения всех подзадач конкретного эпика */
-    ArrayList<Subtask> getEpicSubtasks(int id);
+    /**
+     * Метод получения всех подзадач конкретного эпика
+     */
+    List<Subtask> getEpicSubtasks(int id);
 
     /** Метод удаления всех задач */
     void removeAllTasks();

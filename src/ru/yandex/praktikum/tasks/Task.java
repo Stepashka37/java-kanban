@@ -21,6 +21,14 @@ public class Task {
     protected LocalDateTime startTime;
     protected long duration;
 
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
     public Task(int id, String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
         this.id = id;
         this.name = name;

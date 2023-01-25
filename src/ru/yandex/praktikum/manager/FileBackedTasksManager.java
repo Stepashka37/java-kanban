@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         this.file = file;
     }
 
-    /**
+    /**array = {String[7]@894} ["1", "EPIC", "Epic 1", "IN_PROGRESS", "Epic 1 descript...", +2 more]
      * Метод создания таски из строки, реализована логика для создания эпиков и сабтасок
      */
     public static Task fromString(String value) {
@@ -30,14 +31,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         Task taskToReturn = null;
         switch (TaskType.valueOf(array[1])) {
             case TASK:
-                taskToReturn = new Task(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]));
+                taskToReturn = new Task(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]), Long.parseLong(array[6]), LocalDateTime.parse(array[5]));
                 break;
             case EPIC:
-                taskToReturn = new Epic(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]));
+                taskToReturn = new Epic(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]), Long.parseLong(array[6]), LocalDateTime.parse(array[5]));
                 break;
             case SUBTASK:
-                taskToReturn = new Subtask(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]),
-                        Integer.parseInt(array[5]));
+                taskToReturn = new Subtask(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]), Integer.parseInt(array[5]), Long.parseLong(array[7]), LocalDateTime.parse(array[6]));
+
                 break;
             default:
                 System.out.println("Такого типа нет");
@@ -54,7 +55,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 "," + task.getType() +
                 "," + task.getName() +
                 "," + task.getStatus() +
-                "," + task.getDescription();
+                "," + task.getDescription() +
+                "," + task.getStartTime() +
+                "," + task.getDuration();
 
         if (task.getType().equals(TaskType.SUBTASK)) {
             str = ((Subtask) task).getId() +
@@ -62,7 +65,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                     "," + ((Subtask) task).getName() +
                     "," + ((Subtask) task).getStatus() +
                     "," + ((Subtask) task).getDescription() +
-                    "," + ((Subtask) task).getEpicId();
+                    "," + ((Subtask) task).getEpicId() +
+                    "," + ((Subtask)task).getStartTime() +
+                    "," + ((Subtask)task).getDuration();;
         }
         return str;
     }
@@ -104,7 +109,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     public void save() throws ManagerSaveException {
         try (Writer fileWriter = new FileWriter(file)) {
 
-            fileWriter.write("id,type,name,status,description,epic\n");
+            fileWriter.write("id,type,name,status,description,epic,time,duration\n");
             for (Integer id : tasks.keySet()) {
                 Task taskFromMap = tasks.get(id);
                 fileWriter.write(toString(taskFromMap) + "\n");
