@@ -14,8 +14,19 @@ import java.util.Objects;
 public class Epic extends Task {
     protected List<Integer> subtasksId = new ArrayList<>();
 
+    private LocalDateTime endTime;
 
-    public Epic(int id,  String name, String description, TaskStatus status) {
+    public Epic(int id, String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
+        super(id, name, description, status, duration, startTime);
+        endTime = startTime;
+    }
+
+    public Epic(String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
+        super(name, description, status, duration, startTime);
+        endTime = startTime;
+    }
+
+    public Epic(int id, String name, String description, TaskStatus status) {
         super(id,  name, description, status);
         this.type = TaskType.EPIC;
     }

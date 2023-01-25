@@ -7,7 +7,6 @@
 package ru.yandex.praktikum.tasks;
 
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -22,7 +21,7 @@ public class Task {
     protected LocalDateTime startTime;
     protected long duration;
 
-    public Task(int id, String name, String description, TaskStatus status, LocalDateTime startTime, long duration) {
+    public Task(int id, String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -31,13 +30,14 @@ public class Task {
         this.duration = duration;
     }
 
-    public Task(String name, String description, TaskStatus status, LocalDateTime startTime, long duration) {
+    public Task(String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.startTime = startTime;
         this.duration = duration;
     }
+
 
     public Task(int id, String name, String description, TaskStatus status) {
         this.id = id;
@@ -50,6 +50,10 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = status;
+    }
+
+    public LocalDateTime getEndTime(){
+        return startTime.plusMinutes(duration);
     }
 
     public String getName() {

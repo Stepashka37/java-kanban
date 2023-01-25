@@ -10,7 +10,17 @@ import java.util.Objects;
 
 public class Subtask extends Task {
     protected int epicId;
-    //protected TaskType type = TaskType.SUBTASK;
+
+
+    public Subtask(int id, String name, String description, TaskStatus status, int epicId, long duration, LocalDateTime startTime) {
+        super(id, name, description, status, duration, startTime);
+        this.epicId = epicId;
+    }
+
+    public Subtask(String name, String description, TaskStatus status, int epicId, long duration, LocalDateTime startTime) {
+        super(name, description, status, duration, startTime);
+        this.epicId = epicId;
+    }
 
     public Subtask(int id, String name, String description, TaskStatus status, int epicId) {
         super(id, name, description, status);
@@ -28,10 +38,7 @@ public class Subtask extends Task {
         return epicId;
     }
 
-    /*@Override
-    public TaskType getType() {
-        return type;
-    }*/
+
 
     @Override
     public String toString() {
