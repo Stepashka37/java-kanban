@@ -85,7 +85,7 @@ public class InMemoryTaskManager implements TaskManager {
             return id;
         } else {
             System.out.println("Такого эпика нет!");
-            return 0;
+            return -1;
         }
     }
 
@@ -94,6 +94,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getTask(int id) {
         if (!tasks.containsKey(id)) {
             System.out.println("Нет задачи с таким id");
+            return null;
         }
         final Task task = tasks.get(id);
         historyManager.add(task);
@@ -105,6 +106,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic getEpic(int id) {
         if (!epics.containsKey(id)) {
             System.out.println("Нет эпика с таким id");
+            return null;
         }
         final Epic epic = epics.get(id);
         historyManager.add(epic);
@@ -116,6 +118,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Subtask getSubtask(int id) {
         if (!subtasks.containsKey(id)) {
             System.out.println("Нет подзадачи с таким id");
+            return null;
         }
         final Subtask subtask = subtasks.get(id);
         historyManager.add(subtask);
@@ -146,12 +149,16 @@ public class InMemoryTaskManager implements TaskManager {
     /** Метод получения всех подзадач конкретного эпика */
     @Override
     public ArrayList<Subtask> getEpicSubtasks(int id) {
-        ArrayList<Subtask> epicSubtasksIds = new ArrayList<>();
-        for (int i : epics.get(id).getSubtasksId()) {
-            epicSubtasksIds.add(subtasks.get(i));
+        if (epics.containsKey(id)) {
+            ArrayList<Subtask> epicSubtasksIds = new ArrayList<>();
 
+            for (int i : epics.get(id).getSubtasksId()) {
+                epicSubtasksIds.add(subtasks.get(i));
+
+            }
+            return epicSubtasksIds;
         }
-        return epicSubtasksIds;
+        return null;
     }
 
     /** Метод удаления всех задач */
@@ -222,19 +229,27 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+
     /** Метод обновления задачи */
     @Override
     public void updateTask(Task task) {
-        tasks.put(task.getId(), task);
+        if (tasks.containsKey(task.getId())) {
+            tasks.put(task.getId(), task);
+        } else {
+            System.out.println("Задачи с таким id нет");
+        }
     }
 
     /** Метод обновления эпика */
     @Override
     public void updateEpic(Epic epic) { //
-        epics.put(epic.getId(), epic);
-        calculateEpicStatus(epic);
+        if (epics.containsKey(epic.getId())) {
+            epics.put(epic.getId(), epic);
+            calculateEpicStatus(epic);
+        } else {
+            System.out.println("Эпика с таким id нет");
+        }
     }
-
 
     /** Метод определения статуса эпика  */
     public void calculateEpicStatus(Epic epic) {

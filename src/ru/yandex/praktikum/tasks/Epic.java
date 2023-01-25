@@ -6,8 +6,10 @@
 
 package ru.yandex.praktikum.tasks;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Epic extends Task {
     protected List<Integer> subtasksId = new ArrayList<>();
@@ -53,8 +55,5 @@ public class Epic extends Task {
                 '}';
     }
 
-    /*@Override
-    public TaskType getType() {
-        return type;
-    }*/
+
 }

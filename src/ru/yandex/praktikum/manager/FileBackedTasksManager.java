@@ -18,7 +18,7 @@ import java.util.List;
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
     private File file;
 
-    FileBackedTasksManager(File file) throws IOException {
+    public FileBackedTasksManager(File file) throws IOException {
         this.file = file;
     }
 
@@ -164,22 +164,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
                 }
             }
+            if (!historyInString.equals("null")) {
+                for (Integer id : historyFromString(historyInString)) {
+                    if (managerFromFile.tasks.containsKey(id)) {
+                        Task task = managerFromFile.tasks.get(id);
+                        managerFromFile.historyManager.add(task);
 
-            for (Integer id : historyFromString(historyInString)) {
-                if (managerFromFile.tasks.containsKey(id)) {
-                    Task task = managerFromFile.tasks.get(id);
-                    managerFromFile.historyManager.add(task);
+                    } else if (managerFromFile.epics.containsKey(id)) {
+                        Epic epic = managerFromFile.epics.get(id);
+                        managerFromFile.historyManager.add(epic);
 
-                } else if (managerFromFile.epics.containsKey(id)) {
-                    Epic epic = managerFromFile.epics.get(id);
-                    managerFromFile.historyManager.add(epic);
+                    } else if (managerFromFile.subtasks.containsKey(id)) {
+                        Subtask subtask = managerFromFile.subtasks.get(id);
+                        managerFromFile.historyManager.add(subtask);
 
-                } else if (managerFromFile.subtasks.containsKey(id)) {
-                    Subtask subtask = managerFromFile.subtasks.get(id);
-                    managerFromFile.historyManager.add(subtask);
-
-                } else {
-                    System.out.println("Объекта с id " + id + " нет или он был удален");
+                    } else {
+                        System.out.println("Объекта с id " + id + " нет или он был удален");
+                    }
                 }
             }
 

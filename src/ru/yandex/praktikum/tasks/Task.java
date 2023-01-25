@@ -7,6 +7,10 @@
 package ru.yandex.praktikum.tasks;
 
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Objects;
+
 public class Task {
 
     protected String name;
@@ -15,7 +19,27 @@ public class Task {
     protected TaskStatus status;
     protected TaskType type = TaskType.TASK;
 
-    public Task(int id,  String name, String description, TaskStatus status) {
+    protected LocalDateTime startTime;
+    protected long duration;
+
+    public Task(int id, String name, String description, TaskStatus status, LocalDateTime startTime, long duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    public Task(String name, String description, TaskStatus status, LocalDateTime startTime, long duration) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    public Task(int id, String name, String description, TaskStatus status) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -76,5 +100,18 @@ public class Task {
                 ", status='" + status + '\'' +
                 ", description='" + description + '\'' +
                 "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status && type == task.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, id, status, type);
     }
 }

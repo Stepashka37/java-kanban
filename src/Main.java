@@ -43,12 +43,12 @@ public class Main {
         final int subtaskId2 = toFile.createSubtask(subtask2);
         final int subtaskId3 = toFile.createSubtask(subtask3);
 
-        toFile.getTask(1);
-        toFile.getSubtask(5);
-        toFile.getSubtask(6);
-        toFile.getSubtask(7);
-        toFile.getSubtask(7);
-        toFile.getSubtask(5);
+       toFile.getTask(1);
+       toFile.getSubtask(5);
+       toFile.getSubtask(6);
+       toFile.getSubtask(7);
+       toFile.getSubtask(7);
+       toFile.getSubtask(5);
 
         System.out.println(toFile.getTasks());
         System.out.println();
@@ -56,7 +56,7 @@ public class Main {
         System.out.println();
         System.out.println(toFile.getSubtasks());
         System.out.println();
-        System.out.println(toFile.getHistory());
+       // System.out.println(toFile.getHistory());
     }
 
 }
