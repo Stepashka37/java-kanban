@@ -17,6 +17,10 @@ public class Epic extends Task {
 
     private LocalDateTime endTime;
 
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
 
     public Epic(int id, String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
         super(id, name, description, status, duration, startTime);
@@ -42,7 +46,9 @@ public class Epic extends Task {
 
     public void addSubtaskId(Subtask subtask) {
         subtasksId.add(subtask);
-        //sortByTime();
+        if (subtask.getStartTime() != null && subtask.getDuration() != 0) {
+            sortByTime();
+        }
     }
 
     public List<Subtask> getSubtasksId() {
@@ -62,8 +68,6 @@ public class Epic extends Task {
     }
 
     public void sortByTime() {
-
-
         Comparator<Subtask> comparator = new Comparator<Subtask>() {
             @Override
             public int compare(final Subtask o1, final Subtask o2) {
@@ -77,10 +81,12 @@ public class Epic extends Task {
             }
         };
 
-        Collections.sort(subtasksId, comparator);
-    this.startTime = subtasksId.get(0).getStartTime();
-    this.endTime = subtasksId.get(subtasksId.size()-1).getEndTime();
-    this.duration = subtasksId.stream()
+    List<Subtask> subtasksSorted = subtasksId.stream()
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+    this.startTime = subtasksSorted.get(0).getStartTime();
+    this.endTime = subtasksSorted.get(subtasksSorted.size()-1).getEndTime();
+    this.duration = subtasksSorted.stream()
             .mapToLong(Subtask::getDuration)
             .sum();
     }

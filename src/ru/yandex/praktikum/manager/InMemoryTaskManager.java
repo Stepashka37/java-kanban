@@ -10,6 +10,7 @@ import ru.yandex.praktikum.tasks.Task;
 import ru.yandex.praktikum.tasks.TaskStatus;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -23,15 +24,48 @@ public class InMemoryTaskManager implements TaskManager {
     HashMap<Integer, Task> tasks = new HashMap<>();
     HashMap<Integer, Subtask> subtasks = new HashMap<>();
     HashMap<Integer, Epic> epics = new HashMap<>();
-    Set<Task> prioritizedTasks = new TreeSet<>();
+    Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId);
+    Set<Task> prioritizedTasks = new TreeSet<>(taskComparator);
     HistoryManager historyManager = Managers.getDefaultHistory();
     List<Task> history = new ArrayList<>();
 
 
+
     @Override
-    public List<Task> getPrioritizedTasks() {
-        return null;
+    public boolean checkAndSortTasks(Task task) {
+        boolean flag = false;
+        if (prioritizedTasks.isEmpty() || task.getStartTime() == null) {
+            prioritizedTasks.add(task);
+            return true;
+        }
+        Set<Task> tasksWithDate = prioritizedTasks.stream()
+                .filter(t -> t.getStartTime() != null)
+                .collect(Collectors.toSet());
+
+        for (Task prioritizedTask : tasksWithDate) {
+            if (!task.getStartTime().isBefore(prioritizedTask.getEndTime()) || !task.getEndTime().isAfter(prioritizedTask.getStartTime())) {
+                flag = true;
+                //prioritizedTasks.add(task);
+                //return true;
+            } else {
+                System.out.println("Задача с id " + task.getId() +  " накладывается на  задачу c id " + prioritizedTask.getId()  + " по времени!");
+                return false;
+            }
+
+        }
+        if (flag) {
+            prioritizedTasks.add(task);
+        }
+        return flag;
     }
+
+    @Override
+    public Set<Task> getPrioritizedTasks(){
+        return (prioritizedTasks);
+    }
+
+
+
 
     @Override
 
@@ -61,7 +95,9 @@ public class InMemoryTaskManager implements TaskManager {
     public int createTask(Task task) {
         final int id = ++genId;
         task.setId(id);
+        checkAndSortTasks(task);
         tasks.put(id, task);
+
         return id;
     }
 
@@ -72,6 +108,7 @@ public class InMemoryTaskManager implements TaskManager {
         final int id = ++genId;
         epic.setId(id);
         epics.put(id, epic);
+        checkAndSortTasks(epic);
         return id;
     }
 
@@ -88,8 +125,10 @@ public class InMemoryTaskManager implements TaskManager {
             final int id = ++genId;
             subtask.setId(id);
             subtasks.put(id, subtask);
+            checkAndSortTasks(subtask);
             epic.addSubtaskId(subtask);
             calculateEpicStatus(epic);
+
             return id;
         } else {
             System.out.println("Такого эпика нет!");
@@ -238,6 +277,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
             tasks.put(task.getId(), task);
+            checkAndSortTasks(task);
         } else {
             System.out.println("Задачи с таким id нет");
         }
@@ -249,6 +289,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
             calculateEpicStatus(epic);
+            checkAndSortTasks(epic);
         } else {
             System.out.println("Эпика с таким id нет");
         }
@@ -279,6 +320,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(subtask.getId()) && epics.containsKey(subtask.getEpicId())) {
             subtasks.put(subtask.getId(), subtask);
             calculateEpicStatus(getEpic(subtask.getEpicId()));
+            checkAndSortTasks(subtask);
         } else {
             System.out.println("Подзадачи или эпика с таким id нет");
             return;

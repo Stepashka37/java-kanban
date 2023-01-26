@@ -28,16 +28,37 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
      */
     public static Task fromString(String value) {
         String[] array = value.split(",");
+        Long duration;
+        LocalDateTime startTime;
         Task taskToReturn = null;
+
+        if (TaskType.valueOf(array[1]).equals(TaskType.SUBTASK)) {
+            if(array[6].equals("null") && array[7].equals("0")) {
+                duration = 0L;
+                startTime = null;
+            } else {
+                duration = Long.parseLong(array[7]);
+                startTime = LocalDateTime.parse(array[6]);
+            }
+        } else {
+            if(array[5].equals("null") && array[6].equals("0")) {
+                duration = 0L;
+                startTime = null;
+            } else {
+                duration = Long.parseLong(array[6]);
+                startTime = LocalDateTime.parse(array[5]);
+            }
+        }
+
         switch (TaskType.valueOf(array[1])) {
             case TASK:
-                taskToReturn = new Task(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]), Long.parseLong(array[6]), LocalDateTime.parse(array[5]));
+                taskToReturn = new Task(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]), duration, startTime);
                 break;
             case EPIC:
-                taskToReturn = new Epic(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]), Long.parseLong(array[6]), LocalDateTime.parse(array[5]));
+                taskToReturn = new Epic(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]), duration, startTime);
                 break;
             case SUBTASK:
-                taskToReturn = new Subtask(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]), Integer.parseInt(array[5]), Long.parseLong(array[7]), LocalDateTime.parse(array[6]));
+                taskToReturn = new Subtask(Integer.parseInt(array[0]), array[2], array[4], TaskStatus.valueOf(array[3]), Integer.parseInt(array[5]), duration, startTime);
 
                 break;
             default:
@@ -46,6 +67,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
         return taskToReturn;
     }
+
 
     /**
      * Метод записи таски в строку, отдельный случай - создание строки из сабтаски, т.к. там требуется указать айди эпика
