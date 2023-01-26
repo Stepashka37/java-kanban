@@ -35,7 +35,7 @@ public class Epic extends Task {
     }
 
     public Epic(int id, String name, String description, TaskStatus status) {
-        super(id,  name, description, status);
+        super(id, name, description, status);
         this.type = TaskType.EPIC;
     }
 
@@ -81,14 +81,14 @@ public class Epic extends Task {
             }
         };
 
-    List<Subtask> subtasksSorted = subtasksId.stream()
-                    .sorted(comparator)
-                    .collect(Collectors.toList());
-    this.startTime = subtasksSorted.get(0).getStartTime();
-    this.endTime = subtasksSorted.get(subtasksSorted.size()-1).getEndTime();
-    this.duration = subtasksSorted.stream()
-            .mapToLong(Subtask::getDuration)
-            .sum();
+        List<Subtask> subtasksSorted = subtasksId.stream()
+                .sorted(comparator)
+                .collect(Collectors.toList());
+        this.startTime = subtasksSorted.get(0).getStartTime();
+        this.endTime = subtasksSorted.get(subtasksSorted.size() - 1).getEndTime();
+        this.duration = subtasksSorted.stream()
+                .mapToLong(Subtask::getDuration)
+                .sum();
     }
 
 

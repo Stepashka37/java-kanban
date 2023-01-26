@@ -4,22 +4,20 @@
 
 package ru.yandex.praktikum.manager;
 
-import ru.yandex.praktikum.tasks.Epic;
-import ru.yandex.praktikum.tasks.Subtask;
-import ru.yandex.praktikum.tasks.Task;
-import ru.yandex.praktikum.tasks.TaskStatus;
+import ru.yandex.praktikum.tasks.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    /** @tasks - мапа для хранения задач
+    /**
+     * @tasks - мапа для хранения задач
      * @subtasks - мапа для хранения подзадач
      * @epics - мапа для хранения эпиков
      * @genId = генерируемый id
      * @historyManager - объект класса InMemoryHistoryManager типа HistoryManager
-     *  */
+     */
     protected int genId = 0;
     HashMap<Integer, Task> tasks = new HashMap<>();
     HashMap<Integer, Subtask> subtasks = new HashMap<>();
@@ -30,7 +28,10 @@ public class InMemoryTaskManager implements TaskManager {
     List<Task> history = new ArrayList<>();
 
 
-
+    /**
+     * Метод добавления таски в prioritizedTasks. Реализована логика добавления тасок без даты и длительности,
+     * а также сабтасок, если в prioritizedTask только 1 эпик
+     */
     @Override
     public boolean checkAndSortTasks(Task task) {
         boolean flag = false;
@@ -38,6 +39,11 @@ public class InMemoryTaskManager implements TaskManager {
             prioritizedTasks.add(task);
             return true;
         }
+        if (prioritizedTasks.size() == 1 && task.getType().equals(TaskType.SUBTASK)) {
+            prioritizedTasks.add(task);
+            return true;
+        }
+
         Set<Task> tasksWithDate = prioritizedTasks.stream()
                 .filter(t -> t.getStartTime() != null)
                 .collect(Collectors.toSet());
@@ -45,10 +51,9 @@ public class InMemoryTaskManager implements TaskManager {
         for (Task prioritizedTask : tasksWithDate) {
             if (!task.getStartTime().isBefore(prioritizedTask.getEndTime()) || !task.getEndTime().isAfter(prioritizedTask.getStartTime())) {
                 flag = true;
-                //prioritizedTasks.add(task);
-                //return true;
+
             } else {
-                System.out.println("Задача с id " + task.getId() +  " накладывается на  задачу c id " + prioritizedTask.getId()  + " по времени!");
+                System.out.println("Задача с id " + task.getId() + " накладывается на  задачу c id " + prioritizedTask.getId() + " по времени!");
                 return false;
             }
 
@@ -59,12 +64,13 @@ public class InMemoryTaskManager implements TaskManager {
         return flag;
     }
 
+    /**
+     * Метод возвращающий список задач в порядке приоритета
+     */
     @Override
-    public Set<Task> getPrioritizedTasks(){
+    public Set<Task> getPrioritizedTasks() {
         return (prioritizedTasks);
     }
-
-
 
 
     @Override
@@ -82,34 +88,51 @@ public class InMemoryTaskManager implements TaskManager {
             } else if (subtasks.containsKey(taskId)) {
                 history.add(task);
             } else {
-                System.out.println("Объекта с id " + taskId +  " нет или он был удален");
+                System.out.println("Объекта с id " + taskId + " нет или он был удален");
             }
         }
-            return history;
-        }
+        return history;
+    }
 
 
-    /** Метод для создания задач. В качестве паараметра передается объект
-     * @return - id созданной задачи */
+    /**
+     * Метод для создания задач. В качестве паараметра передается объект
+     *
+     * @return - id созданной задачи
+     */
     @Override
     public int createTask(Task task) {
         final int id = ++genId;
         task.setId(id);
-        checkAndSortTasks(task);
-        tasks.put(id, task);
+        if (checkAndSortTasks(task)) {
 
-        return id;
+            tasks.put(id, task);
+
+            return id;
+        } else {
+            return -1;
+        }
     }
 
-    /** Метод для создания эпиков. В качестве паараметра передается объект
-     * @return - id созданного эпика */
+    /**
+     * Метод для создания эпиков. В качестве паараметра передается объект
+     *
+     * @return - id созданного эпика
+     */
     @Override
     public int createEpic(Epic epic) {
         final int id = ++genId;
         epic.setId(id);
-        epics.put(id, epic);
-        checkAndSortTasks(epic);
-        return id;
+        if (checkAndSortTasks(epic)) {
+
+            epics.put(id, epic);
+
+
+            return id;
+        } else {
+
+            return -1;
+        }
     }
 
     /**
@@ -124,19 +147,25 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic != null) {
             final int id = ++genId;
             subtask.setId(id);
-            subtasks.put(id, subtask);
-            checkAndSortTasks(subtask);
-            epic.addSubtaskId(subtask);
-            calculateEpicStatus(epic);
+            if (checkAndSortTasks(subtask)) {
 
-            return id;
+                subtasks.put(id, subtask);
+                epic.addSubtaskId(subtask);
+                calculateEpicStatus(epic);
+                return id;
+            } else {
+                return -1;
+            }
         } else {
             System.out.println("Такого эпика нет!");
             return -1;
         }
     }
 
-    /** Метод для получения задачи по id, реализована логика проверки, есть ли такая задача в мапе */
+
+    /**
+     * Метод для получения задачи по id, реализована логика проверки, есть ли такая задача в мапе
+     */
     @Override
     public Task getTask(int id) {
         if (!tasks.containsKey(id)) {
@@ -148,7 +177,9 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
-    /** Метод для получения эпика по id, реализована логика проверки, есть ли такой эпик в мапе */
+    /**
+     * Метод для получения эпика по id, реализована логика проверки, есть ли такой эпик в мапе
+     */
     @Override
     public Epic getEpic(int id) {
         if (!epics.containsKey(id)) {
@@ -160,7 +191,9 @@ public class InMemoryTaskManager implements TaskManager {
         return epic;
     }
 
-    /** Метод для получения подзадачи по id, реализована логика проверки, есть ли такая подзадача в мапе */
+    /**
+     * Метод для получения подзадачи по id, реализована логика проверки, есть ли такая подзадача в мапе
+     */
     @Override
     public Subtask getSubtask(int id) {
         if (!subtasks.containsKey(id)) {
@@ -172,28 +205,36 @@ public class InMemoryTaskManager implements TaskManager {
         return subtask;
     }
 
-    /** Метод получения всех задач */
+    /**
+     * Метод получения всех задач
+     */
     @Override
     public ArrayList<Task> getTasks() {
         ArrayList<Task> tasksArrayList = new ArrayList<>(tasks.values());
         return tasksArrayList;
     }
 
-    /** Метод получения всех эпиков */
+    /**
+     * Метод получения всех эпиков
+     */
     @Override
     public ArrayList<Epic> getEpics() {
         ArrayList<Epic> epicsArrayList = new ArrayList<>(epics.values());
         return epicsArrayList;
     }
 
-    /** Метод получения всех подзадач */
+    /**
+     * Метод получения всех подзадач
+     */
     @Override
     public ArrayList<Subtask> getSubtasks() {
         ArrayList<Subtask> subtasksArrayList = new ArrayList<>(subtasks.values());
         return subtasksArrayList;
     }
 
-    /** Метод получения всех подзадач конкретного эпика */
+    /**
+     * Метод получения всех подзадач конкретного эпика
+     */
     @Override
     public List<Subtask> getEpicSubtasks(int id) {
         if (epics.containsKey(id)) {
@@ -203,20 +244,26 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
-    /** Метод удаления всех задач */
+    /**
+     * Метод удаления всех задач
+     */
     @Override
     public void removeAllTasks() {
         tasks.clear();
     }
 
-    /** Метод удаления всех эпиков. При удаленни всех эпиков удаляются их подзадачи */
+    /**
+     * Метод удаления всех эпиков. При удаленни всех эпиков удаляются их подзадачи
+     */
     @Override
     public void removeAllEpics() {
         subtasks.clear();
         epics.clear();
     }
 
-    /** Метод удаления всех подзадач. При удалении всех подзадач пересчитывается статус всех эпиков */
+    /**
+     * Метод удаления всех подзадач. При удалении всех подзадач пересчитывается статус всех эпиков
+     */
     @Override
     public void removeAllSubtasks() {
         subtasks.clear();
@@ -226,7 +273,9 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    /** Метод удаления задачи по id. Реализована логика проверки наличия */
+    /**
+     * Метод удаления задачи по id. Реализована логика проверки наличия
+     */
     @Override
     public void deleteTask(int id) {
         if (tasks.containsKey(id)) {
@@ -238,7 +287,9 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    /** Метод удаления эпика по id. Реализована логика проверки наличия. При удалении эпика удаляются все его подзадачи */
+    /**
+     * Метод удаления эпика по id. Реализована логика проверки наличия. При удалении эпика удаляются все его подзадачи
+     */
     @Override
     public void deleteEpic(int id) {
         if (epics.containsKey(id)) {
@@ -255,7 +306,9 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    /** Метод удаления подзадачи по id. Реализована логика проверки наличия. При удалении */
+    /**
+     * Метод удаления подзадачи по id. Реализована логика проверки наличия. При удалении
+     */
     @Override
     public void deleteSubtask(int id) {
         if (subtasks.containsKey(id)) {
@@ -272,30 +325,40 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-    /** Метод обновления задачи */
+    /**
+     * Метод обновления задачи
+     */
     @Override
     public void updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
-            tasks.put(task.getId(), task);
-            checkAndSortTasks(task);
+            if (checkAndSortTasks(task)) {
+                //checkAndSortTasks(task);
+                tasks.put(task.getId(), task);
+            } else {
+                return;
+            }
+
         } else {
             System.out.println("Задачи с таким id нет");
         }
     }
 
-    /** Метод обновления эпика */
+    /**
+     * Метод обновления эпика
+     */
     @Override
     public void updateEpic(Epic epic) { //
-        if (epics.containsKey(epic.getId())) {
+        if (epics.containsKey(epic.getId()) && checkAndSortTasks(epic)) {
             epics.put(epic.getId(), epic);
             calculateEpicStatus(epic);
-            checkAndSortTasks(epic);
         } else {
             System.out.println("Эпика с таким id нет");
         }
     }
 
-    /** Метод определения статуса эпика  */
+    /**
+     * Метод определения статуса эпика
+     */
     public void calculateEpicStatus(Epic epic) {
         Set<TaskStatus> status = new HashSet<>();
 
@@ -314,13 +377,15 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    /** Метод обновления подзадачи. Реализиована логика проверки наличия. При обновлении подзадачи пересчитывается статус эпика */
+    /**
+     * Метод обновления подзадачи. Реализиована логика проверки наличия. При обновлении подзадачи пересчитывается статус эпика
+     */
     @Override
     public void updateSubtask(Subtask subtask) {
-        if (subtasks.containsKey(subtask.getId()) && epics.containsKey(subtask.getEpicId())) {
+        if (subtasks.containsKey(subtask.getId()) && epics.containsKey(subtask.getEpicId()) && checkAndSortTasks(subtask)) {
             subtasks.put(subtask.getId(), subtask);
             calculateEpicStatus(getEpic(subtask.getEpicId()));
-            checkAndSortTasks(subtask);
+
         } else {
             System.out.println("Подзадачи или эпика с таким id нет");
             return;
