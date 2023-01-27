@@ -28,6 +28,10 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     }
 
+    @AfterEach
+    void clean(){
+        file.delete();
+    }
 
     @Test
     public void loadFromFileTestNotEmptyListTest() throws IOException {
@@ -35,7 +39,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         FileBackedTasksManager tasksManager2 = FileBackedTasksManager.loadFromFile(file);
         final List<Task> tasks = tasksManager2.getTasks();
         assertEquals(2, tasks.size());
-        file.delete();
+        clean();
     }
 
     @Test
@@ -43,9 +47,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         FileBackedTasksManager tasksManager2 = FileBackedTasksManager.loadFromFile(file);
         final List<Task> tasks = tasksManager2.getTasks();
         assertEquals(0, tasks.size());
-        file.delete();
+        clean();
 
-        //assertEquals();
+
     }
 
 
@@ -55,7 +59,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         final int epicId1 = taskManager.createEpic(epic1);
 
         assertEquals(epic1, taskManager.getEpic(epicId1));
-        file.delete();
+        clean();
     }
 
     @Test
@@ -64,15 +68,14 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         final int epicId1 = taskManager.createEpic(epic1);
         FileBackedTasksManager tasksManager2 = FileBackedTasksManager.loadFromFile(file);
         assertEquals(epic1, tasksManager2.getEpic(1));
-        file.delete();
-
+        clean();
     }
 
     @Test
     public void writeEmptyHistoryToFileTest(){
         initTasksWithDate();
         assertEquals(0, taskManager.getHistory().size());
-        file.delete();
+        clean();
     }
 
     @Test
@@ -80,7 +83,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         initTasksWithDate();
         FileBackedTasksManager tasksManager2 = FileBackedTasksManager.loadFromFile(file);
         assertEquals(0, tasksManager2.getHistory().size());
-        file.delete();
+        clean();
     }
 
     @Test
@@ -95,7 +98,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         assertEquals(4, taskManager.getSubtasks().size());
         assertEquals(3, taskManager.getHistory().size());
 
-        file.delete();
+        clean();
     }
 
     @Test
@@ -111,7 +114,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         assertEquals(4, tasksManager2.getSubtasks().size());
         assertEquals(3, tasksManager2.getHistory().size());
 
-        file.delete();
+        clean();
 
     }
 

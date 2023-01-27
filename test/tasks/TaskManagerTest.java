@@ -456,8 +456,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         final int taskId1 = taskManager.createTask(task1);
         final int taskId2 = taskManager.createTask(task2);
-
-        assertFalse(taskManager.checkAndSortTasks(task2));
         assertEquals(1, taskManager.getTasks().size());
 
     }
@@ -472,7 +470,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         Task task2UPD = new Task(2, "Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000, 4, 1, 7, 0));
         taskManager.updateTask(task2UPD);
-
+        System.out.println(taskManager.getPrioritizedTasks());
 
         assertEquals(LocalDateTime.of(2000, 4, 1, 7, 0), taskManager.getTask(2).getStartTime());
         assertEquals(LocalDateTime.of(2000, 4, 1, 9, 0), taskManager.getTask(2).getEndTime());
@@ -488,19 +486,20 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         final int taskId2 = taskManager.createTask(task2);
 
         Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
-        Epic epic2 = new Epic("Epic 2", "Epic 2 description", TaskStatus.NEW, 120, LocalDateTime.of(2000, 4, 1, 0, 0));
         final int epicId1 = taskManager.createEpic(epic1);
-        final int epicId2 = taskManager.createEpic(epic2);
-
-        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.NEW, epicId1, 120, LocalDateTime.of(2000, 5, 1, 2, 0));
+        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.NEW, epicId1, 120, LocalDateTime.of(2000, 3, 1, 0, 0));
         Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.DONE, epicId1, 120, LocalDateTime.of(2000, 3, 1, 2, 0));
-        Subtask subtask3 = new Subtask("Subtask 3", "Subtask 3 description", TaskStatus.NEW, epicId1);
-
         final int subtaskId1 = taskManager.createSubtask(subtask1);
         final int subtaskId2 = taskManager.createSubtask(subtask2);
+
+        Epic epic2 = new Epic("Epic 2", "Epic 2 description", TaskStatus.NEW);
+        final int epicId2 = taskManager.createEpic(epic2);
+        Subtask subtask3 = new Subtask("Subtask 3", "Subtask 3 description", TaskStatus.NEW, epicId1);
         final int subtaskId3 = taskManager.createSubtask(subtask3);
 
-        Task[] ids = {task2, task1, subtask2, epic2, subtask1, epic1, subtask3};
+        //System.out.println(taskManager.getPrioritizedTasks());
+
+        Task[] ids = {task2, task1, subtask1,  epic1, subtask2, epic2, subtask3};
         assertArrayEquals(ids, taskManager.getPrioritizedTasks().toArray());
 
     }
@@ -521,6 +520,119 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(LocalDateTime.of(2000, 1, 1, 2, 0), taskManager.getEpic(epicId1).getStartTime());
         assertEquals(LocalDateTime.of(2000, 1, 1, 6, 0), taskManager.getEpic(epicId1).getEndTime());
         assertEquals(240, taskManager.getEpic(epicId1).getDuration());
+    }
+
+    @Test
+    public void epicStartAndEndTimeTestWhenDelete() {
+        Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
+        final int epicId1 = taskManager.createEpic(epic1);
+
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.NEW, epicId1, 120, LocalDateTime.of(2000, 1, 1, 2, 0));
+        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.DONE, epicId1, 120, LocalDateTime.of(2000, 1, 1, 4, 0));
+
+
+        final int subtaskId1 = taskManager.createSubtask(subtask1);
+        final int subtaskId2 = taskManager.createSubtask(subtask2);
+        taskManager.deleteSubtask(3);
+
+        assertEquals(LocalDateTime.of(2000, 1, 1, 2, 0), taskManager.getEpic(epicId1).getStartTime());
+        assertEquals(LocalDateTime.of(2000, 1, 1, 4, 0), taskManager.getEpic(epicId1).getEndTime());
+        assertEquals(120, taskManager.getEpic(epicId1).getDuration());
+    }
+
+    @Test
+    public void epicStartAndEndTimeTestWhenClearSubtasks() {
+        Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
+        final int epicId1 = taskManager.createEpic(epic1);
+
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.NEW, epicId1, 120, LocalDateTime.of(2000, 1, 1, 2, 0));
+        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.DONE, epicId1, 120, LocalDateTime.of(2000, 1, 1, 4, 0));
+
+
+        final int subtaskId1 = taskManager.createSubtask(subtask1);
+        final int subtaskId2 = taskManager.createSubtask(subtask2);
+        taskManager.removeAllSubtasks();
+
+        assertEquals(null, taskManager.getEpic(epicId1).getStartTime());
+        assertEquals(null , taskManager.getEpic(epicId1).getEndTime());
+        assertEquals(0L, taskManager.getEpic(epicId1).getDuration());
+    }
+
+    @Test
+    void calculateEpicStatusEmptySubtasksListTest(){
+        Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
+        final int epicId1 = taskManager.createEpic(epic1);
+        assertEquals(TaskStatus.NEW, taskManager.getEpic(epicId1).getStatus());
+    }
+
+    @Test
+        public void calculateEpicStatusWithNewSubtasksTest() {
+        Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
+        final int epicId1 = taskManager.createEpic(epic1);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.NEW, epicId1);
+        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.NEW, epicId1);
+        Subtask subtask3 = new Subtask("Subtask 3", "Subtask 3 description", TaskStatus.NEW, epicId1);
+
+        final int subtaskId1 = taskManager.createSubtask(subtask1);
+        final int subtaskId2 = taskManager.createSubtask(subtask2);
+        final int subtaskId3 = taskManager.createSubtask(subtask3);
+
+        assertEquals(TaskStatus.NEW, taskManager.getEpic(epicId1).getStatus());
+
+    }
+
+    @Test
+    public void calculateEpicStatusWithDoneSubtasksTest() {
+        Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
+        final int epicId1 = taskManager.createEpic(epic1);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.DONE, epicId1);
+        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.DONE, epicId1);
+        Subtask subtask3 = new Subtask("Subtask 3", "Subtask 3 description", TaskStatus.DONE, epicId1);
+
+        final int subtaskId1 = taskManager.createSubtask(subtask1);
+        final int subtaskId2 = taskManager.createSubtask(subtask2);
+        final int subtaskId3 = taskManager.createSubtask(subtask3);
+
+        assertEquals(TaskStatus.DONE, taskManager.getEpic(epicId1).getStatus());
+
+    }
+
+    @Test
+    public void calculateEpicStatusWithNewAndDoneSubtasksTest() {
+        Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
+        final int epicId1 = taskManager.createEpic(epic1);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.NEW, epicId1);
+        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.DONE, epicId1);
+        Subtask subtask3 = new Subtask("Subtask 3", "Subtask 3 description", TaskStatus.DONE, epicId1);
+
+        final int subtaskId1 = taskManager.createSubtask(subtask1);
+        final int subtaskId2 = taskManager.createSubtask(subtask2);
+        final int subtaskId3 = taskManager.createSubtask(subtask3);
+
+        assertEquals(TaskStatus.IN_PROGRESS, taskManager.getEpic(epicId1).getStatus());
+
+    }
+
+    @Test
+    public void calculateEpicStatusWithInProgressSubtasksTest() {
+        Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
+        final int epicId1 = taskManager.createEpic(epic1);
+
+        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.IN_PROGRESS, epicId1);
+        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.IN_PROGRESS, epicId1);
+        Subtask subtask3 = new Subtask("Subtask 3", "Subtask 3 description", TaskStatus.IN_PROGRESS, epicId1);
+
+        final int subtaskId1 = taskManager.createSubtask(subtask1);
+        final int subtaskId2 = taskManager.createSubtask(subtask2);
+        final int subtaskId3 = taskManager.createSubtask(subtask3);
+
+        assertEquals(TaskStatus.IN_PROGRESS, taskManager.getEpic(epicId1).getStatus());
+
     }
 
 

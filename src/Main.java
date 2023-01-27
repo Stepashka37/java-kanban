@@ -9,6 +9,7 @@
 import ru.yandex.praktikum.manager.FileBackedTasksManager;
 import ru.yandex.praktikum.manager.InMemoryTaskManager;
 import ru.yandex.praktikum.manager.Managers;
+import ru.yandex.praktikum.manager.TaskManager;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.Subtask;
 import ru.yandex.praktikum.tasks.Task;
@@ -24,7 +25,7 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
 
-        FileBackedTasksManager toFile = Managers.getDefault();
+        TaskManager toFile = Managers.getDefault();
         //InMemoryTaskManager toFile = new InMemoryTaskManager();
         Task task1 = new Task("Task 1", "Task 1 description", TaskStatus.NEW, 120, LocalDateTime.of(2000,4,1,5,0)  );
         Task task2 = new Task("Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000,4,1,3,0));

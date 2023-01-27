@@ -15,7 +15,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         taskManager = new InMemoryTaskManager();
     }
 
-    @Test
+    /*@Test
     void calculateEpicStatusEmptySubtasksListTest(){
         Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
         final int epicId1 = taskManager.createEpic(epic1);
@@ -88,7 +88,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
 
         assertEquals(TaskStatus.IN_PROGRESS, taskManager.getEpic(epicId1).getStatus());
 
-    }
+    }*/
 
 
 }

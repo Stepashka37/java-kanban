@@ -12,15 +12,14 @@ import ru.yandex.praktikum.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public interface TaskManager {
 
 
 
-    boolean checkAndSortTasks(Task task);
 
-    Set<Task> getPrioritizedTasks();
+
+    List<Task> getPrioritizedTasks();
 
     /** Метод для вывода истории просмотров
      * @return - список последних 10 просмотренных задач */

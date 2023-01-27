@@ -57,10 +57,16 @@ public class Epic extends Task {
 
     public void clearSubtasksId() {
         subtasksId.clear();
+        this.startTime = null;
+        this.endTime = null;
+        this.duration = 0L;
     }
 
     public void removeSubtask(Subtask subtask) {
         subtasksId.remove(subtask);
+        if (subtask.getStartTime() != null && subtask.getDuration() != 0) {
+            sortByTime();
+        }
     }
 
     public void setSubtasksId(List<Subtask> subtasksId) {
@@ -81,12 +87,10 @@ public class Epic extends Task {
             }
         };
 
-        List<Subtask> subtasksSorted = subtasksId.stream()
-                .sorted(comparator)
-                .collect(Collectors.toList());
-        this.startTime = subtasksSorted.get(0).getStartTime();
-        this.endTime = subtasksSorted.get(subtasksSorted.size() - 1).getEndTime();
-        this.duration = subtasksSorted.stream()
+        
+        this.startTime = subtasksId.stream().min(comparator).get().startTime;
+        this.endTime = subtasksId.stream().max(comparator).get().getEndTime();
+        this.duration = subtasksId.stream()
                 .mapToLong(Subtask::getDuration)
                 .sum();
     }

@@ -9,8 +9,8 @@ import java.io.IOException;
 public class Managers {
 
     /** Метод для создания нового объекта класса InMemoryTaskManager */
-    public static FileBackedTasksManager getDefault() throws IOException {
-        FileBackedTasksManager manager = FileBackedTasksManager.loadFromFile(new File("savedManager.csv"));
+    public static TaskManager getDefault() throws IOException {
+        TaskManager manager = FileBackedTasksManager.loadFromFile(new File("savedManager.csv"));
         return manager;
     }
 

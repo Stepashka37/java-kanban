@@ -23,7 +23,7 @@ public class InMemoryTaskManager implements TaskManager {
     HashMap<Integer, Subtask> subtasks = new HashMap<>();
     HashMap<Integer, Epic> epics = new HashMap<>();
     Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId);
-    Set<Task> prioritizedTasks = new TreeSet<>(taskComparator);
+    TreeSet<Task> prioritizedTasks = new TreeSet<>(taskComparator);
     HistoryManager historyManager = Managers.getDefaultHistory();
     List<Task> history = new ArrayList<>();
 
@@ -32,14 +32,13 @@ public class InMemoryTaskManager implements TaskManager {
      * Метод добавления таски в prioritizedTasks. Реализована логика добавления тасок без даты и длительности,
      * а также сабтасок, если в prioritizedTask только 1 эпик
      */
-    @Override
-    public boolean checkAndSortTasks(Task task) {
-        boolean flag = false;
+
+    private boolean checkAndSortTasks(Task task) {
         if (prioritizedTasks.isEmpty() || task.getStartTime() == null) {
             prioritizedTasks.add(task);
             return true;
         }
-        if (prioritizedTasks.size() == 1 && task.getType().equals(TaskType.SUBTASK)) {
+        if (prioritizedTasks.size() == 1 && prioritizedTasks.first().getType().equals(TaskType.EPIC)  && task.getType().equals(TaskType.SUBTASK)) {
             prioritizedTasks.add(task);
             return true;
         }
@@ -49,27 +48,28 @@ public class InMemoryTaskManager implements TaskManager {
                 .collect(Collectors.toSet());
 
         for (Task prioritizedTask : tasksWithDate) {
+            if (prioritizedTask.getId() == task.getId()) {
+                prioritizedTasks.remove(prioritizedTask);
+                continue;
+            }
             if (!task.getStartTime().isBefore(prioritizedTask.getEndTime()) || !task.getEndTime().isAfter(prioritizedTask.getStartTime())) {
-                flag = true;
-
+                prioritizedTasks.add(task);
             } else {
                 System.out.println("Задача с id " + task.getId() + " накладывается на  задачу c id " + prioritizedTask.getId() + " по времени!");
                 return false;
             }
 
         }
-        if (flag) {
-            prioritizedTasks.add(task);
-        }
-        return flag;
+        return true;
     }
 
     /**
      * Метод возвращающий список задач в порядке приоритета
      */
     @Override
-    public Set<Task> getPrioritizedTasks() {
-        return (prioritizedTasks);
+    public List<Task> getPrioritizedTasks() {
+        List<Task> tasksInList = new ArrayList<>(prioritizedTasks);
+        return tasksInList;
     }
 
 
@@ -152,6 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
                 subtasks.put(id, subtask);
                 epic.addSubtaskId(subtask);
                 calculateEpicStatus(epic);
+                //checkAndSortTasks(epic); //ДОБАВИЛ СТРОКУ
                 return id;
             } else {
                 return -1;
