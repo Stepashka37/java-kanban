@@ -462,18 +462,25 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void tasksUpdatedMatchInTimeTest() {
-        Task task1 = new Task("Task 1", "Task 1 description", TaskStatus.NEW, 120, LocalDateTime.of(2000, 4, 1, 5, 0));
-        Task task2 = new Task("Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000, 4, 1, 3, 0));
+        Task task1 = new Task("Task 1", "Task 1 description", TaskStatus.NEW, 120, LocalDateTime.of(2000, 4, 1, 3, 0));
+        Task task2 = new Task("Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000, 4, 1, 5, 0));
 
         final int taskId1 = taskManager.createTask(task1);
         final int taskId2 = taskManager.createTask(task2);
+        Task[] beforeUpd = {task1, task2};
+        assertArrayEquals(beforeUpd, taskManager.getPrioritizedTasks().toArray());
 
-        Task task2UPD = new Task(2, "Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000, 4, 1, 7, 0));
+        Task task2UPD = new Task(2, "Task 2UPD", "Task 2 UPDATED", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000, 4, 1, 5, 0));
         taskManager.updateTask(task2UPD);
-        System.out.println(taskManager.getPrioritizedTasks());
+        Task[] afterUpd = {task1, task2UPD};
+        assertArrayEquals(afterUpd, taskManager.getPrioritizedTasks().toArray());
 
-        assertEquals(LocalDateTime.of(2000, 4, 1, 7, 0), taskManager.getTask(2).getStartTime());
-        assertEquals(LocalDateTime.of(2000, 4, 1, 9, 0), taskManager.getTask(2).getEndTime());
+        Task task2UPDAgain = new Task(2, "Task 2UPD", "Task 2 UPDATED", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000, 4, 1, 1, 0));
+        taskManager.updateTask(task2UPDAgain);
+        Task[] afterSecondUpd = {task2UPDAgain, task1};
+        assertArrayEquals(afterSecondUpd, taskManager.getPrioritizedTasks().toArray());
+        assertEquals(LocalDateTime.of(2000, 4, 1, 1, 0), taskManager.getTask(2).getStartTime());
+        assertEquals(LocalDateTime.of(2000, 4, 1, 3, 0), taskManager.getTask(2).getEndTime());
 
     }
 
@@ -497,10 +504,101 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Subtask subtask3 = new Subtask("Subtask 3", "Subtask 3 description", TaskStatus.NEW, epicId1);
         final int subtaskId3 = taskManager.createSubtask(subtask3);
 
-        //System.out.println(taskManager.getPrioritizedTasks());
 
-        Task[] ids = {task2, task1, subtask1,  epic1, subtask2, epic2, subtask3};
+        Task[] ids = {task2, task1, subtask1, subtask2, subtask3};
         assertArrayEquals(ids, taskManager.getPrioritizedTasks().toArray());
+
+    }
+
+    @Test
+    public void getPrioritizedTasksIfDeleteTaskAndSubtaskTest() {
+        Task task1 = new Task("Task 1", "Task 1 description", TaskStatus.NEW, 120, LocalDateTime.of(2000, 2, 1, 0, 0));
+        Task task2 = new Task("Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000, 1, 1, 0, 0));
+
+        final int taskId1 = taskManager.createTask(task1);
+        final int taskId2 = taskManager.createTask(task2);
+
+        Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
+        final int epicId1 = taskManager.createEpic(epic1);
+        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.NEW, epicId1, 120, LocalDateTime.of(2000, 3, 1, 0, 0));
+        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.DONE, epicId1, 120, LocalDateTime.of(2000, 3, 1, 2, 0));
+        final int subtaskId1 = taskManager.createSubtask(subtask1);
+        final int subtaskId2 = taskManager.createSubtask(subtask2);
+
+        Epic epic2 = new Epic("Epic 2", "Epic 2 description", TaskStatus.NEW);
+        final int epicId2 = taskManager.createEpic(epic2);
+        Subtask subtask3 = new Subtask("Subtask 3", "Subtask 3 description", TaskStatus.NEW, epicId1);
+        final int subtaskId3 = taskManager.createSubtask(subtask3);
+
+        taskManager.deleteTask(taskId2);
+        taskManager.deleteSubtask(subtaskId1);
+
+
+        Task[] ids = {task1, subtask2, subtask3};
+        assertArrayEquals(ids, taskManager.getPrioritizedTasks().toArray());
+        assertEquals(LocalDateTime.of(2000, 3, 1, 2, 0), taskManager.getEpic(3).getStartTime());
+        assertEquals(LocalDateTime.of(2000, 3, 1, 4, 0), taskManager.getEpic(3).getEndTime());
+
+    }
+
+    @Test
+    public void getPrioritizedTasksIfDeleteEpicTest() {
+        Task task1 = new Task("Task 1", "Task 1 description", TaskStatus.NEW, 120, LocalDateTime.of(2000, 2, 1, 0, 0));
+        Task task2 = new Task("Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000, 1, 1, 0, 0));
+
+        final int taskId1 = taskManager.createTask(task1);
+        final int taskId2 = taskManager.createTask(task2);
+
+        Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
+        final int epicId1 = taskManager.createEpic(epic1);
+        Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.NEW, epicId1, 120, LocalDateTime.of(2000, 3, 1, 0, 0));
+        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.DONE, epicId1, 120, LocalDateTime.of(2000, 3, 1, 2, 0));
+        final int subtaskId1 = taskManager.createSubtask(subtask1);
+        final int subtaskId2 = taskManager.createSubtask(subtask2);
+
+        Epic epic2 = new Epic("Epic 2", "Epic 2 description", TaskStatus.NEW);
+        final int epicId2 = taskManager.createEpic(epic2);
+        Subtask subtask3 = new Subtask("Subtask 3", "Subtask 3 description", TaskStatus.NEW, epicId2);
+        final int subtaskId3 = taskManager.createSubtask(subtask3);
+
+        taskManager.deleteEpic(epicId1);
+
+
+        Task[] ids = {task2, task1, subtask3};
+        assertArrayEquals(ids, taskManager.getPrioritizedTasks().toArray());
+
+    }
+
+    @Test
+    public void removeAllTasksAndCheckPrioritizedTasks() {
+        initTasksWithDate();
+
+        taskManager.removeAllTasks();
+
+
+        assertEquals(4, taskManager.getPrioritizedTasks().size());
+
+    }
+
+    @Test
+    public void removeAllEpicsAndCheckPrioritizedTasks() {
+        initTasksWithDate();
+
+        taskManager.removeAllEpics();
+
+
+        assertEquals(2, taskManager.getPrioritizedTasks().size());
+
+    }
+
+    @Test
+    public void removeAllSubtasksAndCheckPrioritizedTasks() {
+        initTasksWithDate();
+
+        taskManager.removeAllSubtasks();
+
+
+        assertEquals(2, taskManager.getPrioritizedTasks().size());
 
     }
 
@@ -556,19 +654,19 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.removeAllSubtasks();
 
         assertEquals(null, taskManager.getEpic(epicId1).getStartTime());
-        assertEquals(null , taskManager.getEpic(epicId1).getEndTime());
+        assertEquals(null, taskManager.getEpic(epicId1).getEndTime());
         assertEquals(0L, taskManager.getEpic(epicId1).getDuration());
     }
 
     @Test
-    void calculateEpicStatusEmptySubtasksListTest(){
+    void calculateEpicStatusEmptySubtasksListTest() {
         Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
         final int epicId1 = taskManager.createEpic(epic1);
         assertEquals(TaskStatus.NEW, taskManager.getEpic(epicId1).getStatus());
     }
 
     @Test
-        public void calculateEpicStatusWithNewSubtasksTest() {
+    public void calculateEpicStatusWithNewSubtasksTest() {
         Epic epic1 = new Epic("Epic 1", "Epic 1 description", TaskStatus.NEW);
         final int epicId1 = taskManager.createEpic(epic1);
 
@@ -633,6 +731,52 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         assertEquals(TaskStatus.IN_PROGRESS, taskManager.getEpic(epicId1).getStatus());
 
+    }
+
+    @Test
+    public void checkDontAddInPriorotizedIfCross() {
+        //Создаю первую задачу - ОК
+        assertEquals(1, taskManager.createTask(new Task("Task 1", "Task 1 description", TaskStatus.NEW, 60, LocalDateTime.of(2000, 1, 1, 2, 0))));
+        //Создаю вторую задачу - ОК
+        assertEquals(2, taskManager.createTask(new Task("Task 1", "Task 1 description", TaskStatus.NEW, 60, LocalDateTime.of(2000, 1, 1, 3, 0))));
+        //Создаю третью задачу, которая пересекается с первой
+        assertEquals(-1, taskManager.createTask(new Task("Task 1", "Task 1 description", TaskStatus.NEW, 60, LocalDateTime.of(2000, 1, 1, 1, 30))));
+        //Ошибка, id = -1 что соотвествует ошибке - ОК, но имеется побочный эффект:
+        //В task задачу не сохранили, вернули -1, но при этом (при проходе цикла) задача была добавлена в prioritizedTasks
+        assertEquals(2, taskManager.getPrioritizedTasks().size());
+        assertEquals(2, taskManager.getTasks().size());
+
+    }
+
+    @Test
+    public void checkHistoryWhenRemoveAllTask() {
+        initTasksWithoutDate();
+        taskManager.getTask(1);
+        taskManager.getTask(2);
+        taskManager.removeAllTasks();
+        assertEquals(0, taskManager.getHistory().size());
+    }
+
+    @Test
+    public void checkHistoryWhenRemoveAllEpics() {
+        initTasksWithoutDate();
+        taskManager.getEpic(3);
+        taskManager.getSubtask(6);
+        taskManager.getSubtask(5);
+        taskManager.getEpic(4);
+        taskManager.removeAllEpics();
+        assertEquals(0, taskManager.getHistory().size());
+    }
+
+    @Test
+    public void checkHistoryWhenRemoveAllSubtasks() {
+        initTasksWithoutDate();
+        taskManager.getEpic(3);
+        taskManager.getSubtask(6);
+        taskManager.getSubtask(5);
+        taskManager.getEpic(4);
+        taskManager.removeAllSubtasks();
+        assertEquals(2, taskManager.getHistory().size());
     }
 
 

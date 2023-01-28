@@ -52,8 +52,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void remove(int id) {
         Node node = idAndNode.get(id);
         if (node != null) {
-            history.removeNode(node);
             idAndNode.remove(id);
+            history.removeNode(node);
+
         }
     }
 }
@@ -115,6 +116,9 @@ class CustomLinkedList<T> {
      */
     public void removeNode(Node node) {
         if (node.next == null && node.prev == null) {
+            this.head = null;
+            this.tail = null;
+            this.size--;
             return;
         } else if (node.prev == null) {
             head = node.next;
