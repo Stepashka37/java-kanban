@@ -25,8 +25,8 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
 
-        TaskManager toFile = Managers.getDefault();
-        //InMemoryTaskManager toFile = new InMemoryTaskManager();
+        //TaskManager toFile = Managers.getDefault();
+        InMemoryTaskManager toFile = new InMemoryTaskManager();
         Task task1 = new Task("Task 1", "Task 1 description", TaskStatus.NEW, 120, LocalDateTime.of(2000,4,1,5,0)  );
         Task task2 = new Task("Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000,4,1,3,0));
         Task task3 = new Task("Task 3", "Task 3 description", TaskStatus.IN_PROGRESS);
@@ -41,7 +41,7 @@ public class Main {
         final int epicId2 = toFile.createEpic(epic2);
 
         Subtask subtask1 = new Subtask("Subtask 1", "Subtask 1 description", TaskStatus.NEW, epicId1, 120, LocalDateTime.of(2000,11,1,2,0));
-        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.DONE, epicId1, 120, LocalDateTime.of(2000,11,1,2,0));
+        Subtask subtask2 = new Subtask("Subtask 2", "Subtask 2 description", TaskStatus.DONE, epicId1, 120, LocalDateTime.of(2000,11,1,4,0));
         Subtask subtask3 = new Subtask("Subtask 3", "Subtask 3 description", TaskStatus.NEW, epicId1);
 
         final int subtaskId1 = toFile.createSubtask(subtask1);
@@ -54,13 +54,25 @@ public class Main {
 
         }
         System.out.println();
-        toFile.getEpic(4);
+        //toFile.getEpic(4);
         //System.out.println(toFile.getEpic(4).getStartTime());
         //System.out.println(toFile.getEpic(4).getEndTime());
         //System.out.println(toFile.getEpic(4).getDuration());
-        toFile.getEpic(5);
+        //toFile.getEpic(5);
+        //toFile.getEpic(4);
+        //toFile.getTask(2);
+        //toFile.getTask(3);
+        //toFile.getTask(1);
+        toFile.getEpic(4);
+        toFile.getSubtask(7);
+        toFile.getSubtask(6);
+        toFile.getSubtask(8);
         toFile.getEpic(4);
 
+        toFile.removeAllSubtasks();
+        //toFile.removeAllTasks();
+        System.out.println();
+        System.out.println(toFile.getHistory());
         System.out.println(toFile.getHistory());
 
 

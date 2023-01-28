@@ -20,6 +20,7 @@ public class Task {
 
     protected LocalDateTime startTime;
     protected long duration;
+    protected LocalDateTime endTime;
 
     public LocalDateTime getStartTime() {
         return startTime;
@@ -61,7 +62,8 @@ public class Task {
     }
 
     public LocalDateTime getEndTime(){
-        return startTime.plusMinutes(duration);
+        this.endTime = this.startTime.plusMinutes(duration);
+        return endTime;
     }
 
     public String getName() {

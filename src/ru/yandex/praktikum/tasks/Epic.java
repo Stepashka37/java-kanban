@@ -77,6 +77,7 @@ public class Epic extends Task {
         Comparator<Subtask> comparator = new Comparator<Subtask>() {
             @Override
             public int compare(final Subtask o1, final Subtask o2) {
+
                 if (o1.getStartTime().isBefore(o2.getStartTime())) {
                     return -1;
                 } else if (o1.getStartTime().isAfter(o2.getStartTime())) {
@@ -87,9 +88,18 @@ public class Epic extends Task {
             }
         };
 
-        
-        this.startTime = subtasksId.stream().min(comparator).get().startTime;
-        this.endTime = subtasksId.stream().max(comparator).get().getEndTime();
+
+        this.startTime = subtasksId.stream()
+                .filter(subtask -> subtask.getStartTime() != null)
+                .min(comparator)
+                .get()
+                .getStartTime();
+
+        this.endTime = subtasksId.stream()
+                .filter(subtask -> subtask.getStartTime() != null)
+                .max(comparator)
+                .get()
+                .getEndTime();
         this.duration = subtasksId.stream()
                 .mapToLong(Subtask::getDuration)
                 .sum();
