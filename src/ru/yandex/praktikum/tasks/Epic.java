@@ -13,24 +13,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Epic extends Task {
-    protected List<Subtask> subtasksId = new ArrayList<>();
+    public  List<Subtask> subtasksId = new ArrayList<>();
 
-    private LocalDateTime endTime;
+    protected  LocalDateTime epicEndTime;
 
     @Override
     public LocalDateTime getEndTime() {
-        return endTime;
+        return epicEndTime;
     }
 
     public Epic(int id, String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
         super(id, name, description, status, duration, startTime);
-        endTime = startTime;
+        epicEndTime = startTime;
         this.type = TaskType.EPIC;
     }
 
     public Epic(String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
         super(name, description, status, duration, startTime);
-        endTime = startTime;
+        epicEndTime = startTime;
         this.type = TaskType.EPIC;
     }
 
@@ -45,6 +45,9 @@ public class Epic extends Task {
     }
 
     public void addSubtaskId(Subtask subtask) {
+        if (subtasksId == null) {
+            subtasksId = new ArrayList<>();
+        }
         subtasksId.add(subtask);
         if (subtask.getStartTime() != null && subtask.getDuration() != 0) {
             sortByTime();
@@ -58,7 +61,7 @@ public class Epic extends Task {
     public void clearSubtasksId() {
         subtasksId.clear();
         this.startTime = null;
-        this.endTime = null;
+        this.epicEndTime = null;
         this.duration = 0L;
     }
 
@@ -95,7 +98,7 @@ public class Epic extends Task {
                 .get()
                 .getStartTime();
 
-        this.endTime = subtasksId.stream()
+        this.epicEndTime = subtasksId.stream()
                 .filter(subtask -> subtask.getStartTime() != null)
                 .max(comparator)
                 .get()

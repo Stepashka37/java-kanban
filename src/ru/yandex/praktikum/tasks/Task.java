@@ -86,6 +86,10 @@ public class Task {
         return id;
     }
 
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
     public void setId(int id) {
         this.id = id;
     }

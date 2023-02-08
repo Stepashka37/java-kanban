@@ -19,12 +19,12 @@ public class InMemoryTaskManager implements TaskManager {
      * @historyManager - объект класса InMemoryHistoryManager типа HistoryManager
      */
     protected int genId = 0;
-    HashMap<Integer, Task> tasks = new HashMap<>();
-    HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    HashMap<Integer, Epic> epics = new HashMap<>();
+    protected HashMap<Integer, Task> tasks = new HashMap<>();
+    protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected HashMap<Integer, Epic> epics = new HashMap<>();
     Comparator<Task> taskComparator = Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId);
-    TreeSet<Task> prioritizedTasks = new TreeSet<>(taskComparator);
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    protected TreeSet<Task> prioritizedTasks = new TreeSet<>(taskComparator);
+    protected HistoryManager historyManager = Managers.getDefaultHistory();
 
 
     /**

@@ -19,6 +19,7 @@ import java.util.List;
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
     private File file;
 
+
     public FileBackedTasksManager(File file) throws IOException {
         this.file = file;
     }
@@ -331,7 +332,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     /**
      * Класс реализующий собственное исключение
      */
-    class ManagerSaveException extends RuntimeException {
+    public static class ManagerSaveException extends RuntimeException {
 
         public ManagerSaveException() {
         }

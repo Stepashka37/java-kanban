@@ -25,9 +25,9 @@ public class Main {
      */
     public static void main(String[] args) throws IOException {
 
-        //TaskManager toFile = Managers.getDefault();
-        InMemoryTaskManager toFile = new InMemoryTaskManager();
-        Task task1 = new Task("Task 1", "Task 1 description", TaskStatus.NEW, 120, LocalDateTime.of(2000,4,1,5,0)  );
+        TaskManager toFile = Managers.getDefault();
+        //InMemoryTaskManager toFile = new InMemoryTaskManager();
+        Task task1 = new Task("Task 1", "Task 1 description", TaskStatus.NEW, 120, LocalDateTime.of(2000,4,1,5,00)  );
         Task task2 = new Task("Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000,4,1,3,0));
         Task task3 = new Task("Task 3", "Task 3 description", TaskStatus.IN_PROGRESS);
 
