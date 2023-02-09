@@ -6,10 +6,14 @@
  * 4) Проверка на отсутствие в истори подзадач уже удаленного эпика
  */
 
+import ru.yandex.praktikum.http.HttpTaskManager;
+import ru.yandex.praktikum.http.HttpTaskServer;
+import ru.yandex.praktikum.http.KVTaskClient;
 import ru.yandex.praktikum.manager.FileBackedTasksManager;
 import ru.yandex.praktikum.manager.InMemoryTaskManager;
 import ru.yandex.praktikum.manager.Managers;
 import ru.yandex.praktikum.manager.TaskManager;
+import ru.yandex.praktikum.server.KVServer;
 import ru.yandex.praktikum.tasks.Epic;
 import ru.yandex.praktikum.tasks.Subtask;
 import ru.yandex.praktikum.tasks.Task;
@@ -24,6 +28,12 @@ public class Main {
      * Метод для имитации записи данных из менеджера в файл и воссоздания менеджера из файла
      */
     public static void main(String[] args) throws IOException {
+        KVServer kv = new KVServer();
+
+
+        kv.start();
+
+
 
         TaskManager toFile = Managers.getDefault();
         //InMemoryTaskManager toFile = new InMemoryTaskManager();
@@ -49,33 +59,25 @@ public class Main {
         final int subtaskId3 = toFile.createSubtask(subtask3);
 
 
-        for (Task prioritizedTask : toFile.getPrioritizedTasks()) {
-            System.out.println(prioritizedTask);
 
-        }
-        System.out.println();
-        //toFile.getEpic(4);
-        //System.out.println(toFile.getEpic(4).getStartTime());
-        //System.out.println(toFile.getEpic(4).getEndTime());
-        //System.out.println(toFile.getEpic(4).getDuration());
-        //toFile.getEpic(5);
-        //toFile.getEpic(4);
-        //toFile.getTask(2);
-        //toFile.getTask(3);
-        //toFile.getTask(1);
         toFile.getEpic(4);
-        toFile.getSubtask(7);
+        toFile.getTask(1);
         toFile.getSubtask(6);
         toFile.getSubtask(8);
         toFile.getEpic(4);
 
-        toFile.removeAllSubtasks();
-        //toFile.removeAllTasks();
-        System.out.println();
-        System.out.println(toFile.getHistory());
-        System.out.println(toFile.getHistory());
+        /*KVTaskClient client = new KVTaskClient(8060);
+        System.out.println(client.load("tasks"));*/
+
+        //TaskManager fromWeb = Managers.getDefault();
 
 
+
+        HttpTaskManager fromServer = new HttpTaskManager(8060, true);
+
+        HttpTaskServer server = new HttpTaskServer(fromServer);
+        server.server.start();
+        System.out.println("Сервер запущен");
 
     }
 
