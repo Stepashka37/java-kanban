@@ -73,7 +73,7 @@ public class Main {
 
 
 
-        HttpTaskManager fromServer = new HttpTaskManager(8060, true);
+        HttpTaskManager fromServer = new HttpTaskManager(KVServer.PORT, true);
 
         HttpTaskServer server = new HttpTaskServer(fromServer);
         server.server.start();

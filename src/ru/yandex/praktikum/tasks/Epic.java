@@ -48,6 +48,7 @@ public class Epic extends Task {
         if (subtasksId == null) {
             subtasksId = new ArrayList<>();
         }
+
         subtasksId.add(subtask);
         if (subtask.getStartTime() != null && subtask.getDuration() != 0) {
             sortByTime();

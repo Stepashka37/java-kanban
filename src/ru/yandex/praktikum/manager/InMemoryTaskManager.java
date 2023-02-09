@@ -392,7 +392,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask subtask) {
         if (subtasks.containsKey(subtask.getId()) && epics.containsKey(subtask.getEpicId()) && checkAndSortTasks(subtask)) {
+            Subtask subtaskToBeReplaced = subtasks.get(subtask.getId());
             subtasks.put(subtask.getId(), subtask);
+            epics.get(subtask.getEpicId()).removeSubtask(subtaskToBeReplaced);
+            epics.get(subtask.getEpicId()).addSubtaskId(subtask);
+
             calculateEpicStatus(getEpic(subtask.getEpicId()));
 
         } else {

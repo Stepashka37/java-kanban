@@ -19,8 +19,7 @@ public class Managers {
 
     /** Метод для создания нового объекта класса InMemoryTaskManager */
     public static TaskManager getDefault() throws IOException {
-        //TaskManager manager = FileBackedTasksManager.loadFromFile(new File("savedManager.csv"));
-        TaskManager manager = new HttpTaskManager(8060);
+        TaskManager manager = new HttpTaskManager(KVServer.PORT);
         return manager;
     }
 
