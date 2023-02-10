@@ -26,7 +26,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class HttpTaskManagerTest {
+public class HttpTaskManagerTest extends TaskManagerTest {
     private KVServer kv = new KVServer();
     private TaskManager loadToServer;
     private HttpTaskServer server;
@@ -68,36 +68,42 @@ public class HttpTaskManagerTest {
     }
 
 
-    @BeforeEach
-    public void serverStart() throws IOException {
-        kv.start();
+    public void loadManagerFromServer() throws IOException {
         createManagerAndAddTasks();
+        taskManager = new HttpTaskManager(KVServer.PORT, true);
         fromServer = new HttpTaskManager(KVServer.PORT, true);
         server = new HttpTaskServer(fromServer);
         server.server.start();
-
-
     }
+
+    @BeforeEach
+    public void serverStart() throws IOException {
+        kv.start();
+        taskManager = new HttpTaskManager(KVServer.PORT, false);
+    }
+
+    @AfterEach
+    public void stopServer() {
+        kv.stop();
+    }
+
 
     @Test
     public void checkAllTasksSaved() throws IOException {
-        //createManagerAndAddTasks();
+        createManagerAndAddTasks();
 
         assertEquals(3, loadToServer.getTasks().size());
         assertEquals(2, loadToServer.getEpics().size());
         assertEquals(3, loadToServer.getSubtasks().size());
         assertEquals(4, loadToServer.getHistory().size());
         Task task2 = new Task(2, "Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000, 4, 1, 3, 0));
-
-
         assertEquals(task2, loadToServer.getTask(2));
 
     }
 
     @Test
     public void loadFromServer() throws IOException {
-        createManagerAndAddTasks();
-        HttpTaskManager fromServer = new HttpTaskManager(KVServer.PORT, true);
+        loadManagerFromServer();
         assertEquals(3, fromServer.getTasks().size());
         assertEquals(2, fromServer.getEpics().size());
         assertEquals(3, fromServer.getSubtasks().size());
@@ -105,14 +111,12 @@ public class HttpTaskManagerTest {
 
         Task task2 = new Task(2, "Task 2", "Task 2 description", TaskStatus.IN_PROGRESS, 120, LocalDateTime.of(2000, 4, 1, 3, 0));
         assertEquals(task2, loadToServer.getTask(2));
+        server.server.stop(0);
     }
 
     @Test
     public void endpointTasksCheck() throws IOException, InterruptedException {
-        /*createManagerAndAddTasks();
-        HttpTaskManager fromServer = new HttpTaskManager(KVServer.PORT, true);
-        HttpTaskServer server = new HttpTaskServer(fromServer);
-        server.server.start();*/
+        loadManagerFromServer();
         System.out.println("Сервер запущен");
         Gson gson = new Gson();
 
@@ -138,15 +142,12 @@ public class HttpTaskManagerTest {
 
         assertEquals(405, responsePost.statusCode());
 
-        //server.server.stop(0);
+        server.server.stop(0);
     }
 
     @Test
     public void endpointHistoryCheck() throws IOException, InterruptedException {
-       /* createManagerAndAddTasks();
-        HttpTaskManager fromServer = new HttpTaskManager(KVServer.PORT, true);
-        HttpTaskServer server = new HttpTaskServer(fromServer);
-        server.server.start();*/
+        loadManagerFromServer();
         System.out.println("Сервер запущен");
         URI url = URI.create("http://localhost:8080/tasks/history");
         Gson gson = new Gson();
@@ -165,12 +166,12 @@ public class HttpTaskManagerTest {
 
         assertEquals(405, responseDelete.statusCode());
 
-        // server.server.stop(0);
+        server.server.stop(0);
     }
 
     @Test
     public void endpointEpicSubtasksCheck() throws IOException, InterruptedException {
-
+        loadManagerFromServer();
         System.out.println("Сервер запущен");
         URI url = URI.create("http://localhost:8080/tasks/subtask/epic?id=4");
 
@@ -184,12 +185,12 @@ public class HttpTaskManagerTest {
 
         assertEquals(200, responseGet.statusCode());
         assertEquals(3, listFromServer.size());
-
+        server.server.stop(0);
     }
 
     @Test
     public void handleTaskEndpointsCheck() throws IOException, InterruptedException {
-
+        loadManagerFromServer();
         System.out.println("Сервер запущен");
         URI url = URI.create("http://localhost:8080/tasks/task");
         Gson gson = new Gson();
@@ -239,12 +240,12 @@ public class HttpTaskManagerTest {
         assertEquals(200, responseDeleteAll.statusCode());
         assertEquals(0, fromServer.getTasks().size());
 
-
+        server.server.stop(0);
     }
 
     @Test
     public void handleSubtaskEndpointsCheck() throws IOException, InterruptedException {
-
+        loadManagerFromServer();
         System.out.println("Сервер запущен");
         URI url = URI.create("http://localhost:8080/tasks/subtask");
         Gson gson = new Gson();
@@ -297,13 +298,13 @@ public class HttpTaskManagerTest {
         HttpResponse<String> responseDeleteAll = client.send(requestDeleteAll, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, responseDeleteAll.statusCode());
         assertEquals(0, fromServer.getSubtasks().size());
-
+        server.server.stop(0);
     }
 
 
     @Test
     public void handleEpicEndpointsCheck() throws IOException, InterruptedException {
-
+        loadManagerFromServer();
         System.out.println("Сервер запущен");
         URI url = URI.create("http://localhost:8080/tasks/epic");
         Gson gson = new Gson();
@@ -358,14 +359,8 @@ public class HttpTaskManagerTest {
         assertEquals(200, responseDeleteAll.statusCode());
         assertEquals(0, fromServer.getEpics().size());
 
-
-    }
-
-
-    @AfterEach
-    public void stopServer() {
-        kv.stop();
         server.server.stop(0);
     }
+
 
 }

@@ -132,4 +132,12 @@ public class Task {
     public int hashCode() {
         return Objects.hash(name, description, id, status, type);
     }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
 }

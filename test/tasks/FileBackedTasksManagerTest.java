@@ -23,7 +23,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     @BeforeEach
     void setUp() throws IOException {
         file = new File("savedManager.csv");
-        //taskManager = Managers.getDefault();
         taskManager = new FileBackedTasksManager(file);
 
     }
