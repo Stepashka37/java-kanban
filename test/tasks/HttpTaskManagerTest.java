@@ -26,7 +26,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class HttpTaskManagerTest extends TaskManagerTest {
+public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
     private KVServer kv = new KVServer();
     private TaskManager loadToServer;
     private HttpTaskServer server;

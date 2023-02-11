@@ -11,6 +11,7 @@ import java.util.*;
 
 public class Epic extends Task {
     public  List<Subtask> subtasksId = new ArrayList<>();
+    protected LocalDateTime endTime;
 
 
     @Override
@@ -67,6 +68,9 @@ public class Epic extends Task {
         this.subtasksId = subtasksId;
     }
 
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
 
     @Override
     public String toString() {
