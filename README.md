@@ -1,5 +1,5 @@
 <p align="center">
-      <img src="https://cdn0.iconfinder.com/data/icons/ios-web-user-interface-3d-square-vol-4/96/Checklist_clipboard_inventory_list_report_tasks_todo-1024.png" width="20">
+      <img src="https://cdn0.iconfinder.com/data/icons/ios-web-user-interface-3d-square-vol-4/96/Checklist_clipboard_inventory_list_report_tasks_todo-1024.png" width="50">
 </p>
 # Java Task Tracker
 
