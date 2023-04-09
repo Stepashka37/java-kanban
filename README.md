@@ -24,6 +24,10 @@
 1) В файле 
 2) На сервере (KVServer)
 
+## Tech Stack 🔧
+
+Java Core 11, JUnit 5, Gson, HttpServer, KVServer
+
 ## API Reference ⚙️
 - GET tasks/ - получить список приоритетных задач
 - GET tasks/history - получить историю из 10 последних просмотренных задач
@@ -36,10 +40,6 @@
 - DELETE tasks/task - удалить все задачи
 - DELETE tasks/task/{id} - удалить задачу по id
 *аналогичные эндпоинты для эпиков и подзадач
-
-## Tech Stack 🔧
-
-Java Core 11, JUnit 5, Gson, HttpServer, KVServer
 
 ## How to start the project ▶️
 
