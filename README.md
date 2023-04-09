@@ -22,11 +22,19 @@
 1) В файле 
 2) На сервере (KVServer)
 
-## Acknowledgements
+# API Reference
+- GET tasks/ - получить список приоритетных задач
+- GET tasks/history - получить историю из 10 последних просмотренных задач
+- GET subtask/epic/{id} - получить список подзадач конкретного эпика
 
- - [Awesome Readme Templates](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
- - [Awesome README](https://github.com/matiassingers/awesome-readme)
- - [How to write a Good readme](https://bulldogjob.com/news/449-how-to-write-a-good-readme-for-your-github-project)
+- GET tasks/task - получить список всех задач
+- GET tasks/task/{id} - получить задачу по id 
+- POST tasks/task - создать задачу 
+- POST tasks/task/{id} - обновить задачу
+- DELETE tasks/task - удалить все задачи
+- DELETE tasks/task/{id} - удалить задачу по id
+*аналогичные эндпоинты для эпиков и подзадач
+
 
 
 ## Tech Stack
