@@ -1,6 +1,8 @@
 
 # Java Task Tracker
 
+## Description
+
 Приложение реализует трекер задач.
 Всего в приложении 3 вида задач: задача, эпик, подзадача.
 
@@ -22,7 +24,7 @@
 1) В файле 
 2) На сервере (KVServer)
 
-# API Reference
+## API Reference
 - GET tasks/ - получить список приоритетных задач
 - GET tasks/history - получить историю из 10 последних просмотренных задач
 - GET subtask/epic/{id} - получить список подзадач конкретного эпика
@@ -35,11 +37,30 @@
 - DELETE tasks/task/{id} - удалить задачу по id
 *аналогичные эндпоинты для эпиков и подзадач
 
-
-
 ## Tech Stack
 
 Java Core 11, JUnit 5, Gson, HttpServer, KVServer
+
+# How to start the project 
+
+## Склонируйте репозиторий и перейдите в него 
+```
+git clone https://github.com/Stepashka37/java-kanban.git
+```
+## Запустите проект в выбранной IDE
+
+## Перейдите по адресу 
+```
+http://localhost:8080/tasks
+```
+## Можно работать с проектом 
+
+
+# Tests
+Тестирование выполнено с помощью фреймворка JUnit 5.
+Ознакомиться с результатами тестов можно по ссылке: http://localhost:63342/java-kanban/Test%20Results%20-%20All_in_java-kanban.html?_ijt=cbtg2goa1tn6st9385laaveupp&_ij_reload=RELOAD_ON_SAVE
+
+
 
 
 
