@@ -2,7 +2,6 @@ package ru.yandex.praktikum.server;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import ru.yandex.praktikum.http.KVTaskClient;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -121,7 +120,8 @@ public class KVServer {
         return "" + System.currentTimeMillis();
     }
 
-    protected boolean hasAuth(HttpExchange h) {
+    protected boolean
+    hasAuth(HttpExchange h) {
         String rawQuery = h.getRequestURI().getRawQuery();
         return rawQuery != null && (rawQuery.contains("API_TOKEN=" + apiToken) || rawQuery.contains("API_TOKEN=DEBUG"));
     }

@@ -6,7 +6,6 @@
 package ru.yandex.praktikum.tasks;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class Subtask extends Task {
     protected int epicId;
@@ -31,7 +30,7 @@ public class Subtask extends Task {
     }
 
     public Subtask(String name, String description, TaskStatus status, int epicId) {
-        super(name,  description, status);
+        super(name, description, status);
         this.type = TaskType.SUBTASK;
         this.epicId = epicId;
     }
@@ -39,7 +38,6 @@ public class Subtask extends Task {
     public int getEpicId() {
         return epicId;
     }
-
 
 
     @Override

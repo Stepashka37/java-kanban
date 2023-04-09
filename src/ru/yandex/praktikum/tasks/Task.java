@@ -54,13 +54,13 @@ public class Task {
         this.status = status;
     }
 
-    public Task(String name,  String description, TaskStatus status) {
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
-    public LocalDateTime getEndTime(){
+    public LocalDateTime getEndTime() {
         return this.startTime.plusMinutes(duration);
     }
 

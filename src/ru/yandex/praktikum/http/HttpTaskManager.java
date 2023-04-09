@@ -9,7 +9,6 @@ import ru.yandex.praktikum.tasks.Subtask;
 import ru.yandex.praktikum.tasks.Task;
 import ru.yandex.praktikum.tasks.TaskType;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +18,11 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private final Gson gson;
     private final KVTaskClient client;
 
-    public HttpTaskManager( int port) throws IOException {
+    public HttpTaskManager(int port) throws IOException {
         this(port, false);
     }
 
-    public HttpTaskManager (int port, boolean load) throws IOException {
+    public HttpTaskManager(int port, boolean load) throws IOException {
         super(null);
         gson = Managers.getGson();
         client = new KVTaskClient(port);
@@ -32,14 +31,14 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
-    protected void addTasks (List<? extends Task> tasks) {
+    protected void addTasks(List<? extends Task> tasks) {
         for (Task task : tasks) {
             final int id = task.getId();
-            if(id > genId) {
+            if (id > genId) {
                 genId = id;
             }
             TaskType type = task.getType();
-            if(type == TaskType.TASK) {
+            if (type == TaskType.TASK) {
                 this.tasks.put(id, task);
                 prioritizedTasks.add(task);
 
@@ -70,7 +69,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }.getType());
 
         for (Integer taskId : history) {
-            if ( this.tasks.get(taskId) != null) {
+            if (this.tasks.get(taskId) != null) {
                 historyManager.add(this.tasks.get(taskId));
             } else if (this.epics.get(taskId) != null) {
                 historyManager.add(this.epics.get(taskId));
@@ -83,7 +82,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     @Override
-    public void save(){
+    public void save() {
         String jsonTasks = gson.toJson(new ArrayList<>(tasks.values()));
         client.put("tasks", jsonTasks);
         String jsonEpics = gson.toJson(new ArrayList<>(epics.values()));
@@ -95,7 +94,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         client.put("history", jsonHistory);
     }
 
-    int getGenId(){
+    int getGenId() {
         return genId;
     }
 }

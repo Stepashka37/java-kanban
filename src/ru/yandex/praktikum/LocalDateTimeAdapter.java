@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH");
+
     @Override
     public void write(JsonWriter jsonWriter, final LocalDateTime localDateTime) throws IOException {
         jsonWriter.value(localDateTime.format(formatter));

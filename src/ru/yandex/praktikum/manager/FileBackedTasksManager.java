@@ -24,7 +24,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         this.file = file;
     }
 
-    /**array = {String[7]@894} ["1", "EPIC", "Epic 1", "IN_PROGRESS", "Epic 1 descript...", +2 more]
+    /**
+     * array = {String[7]@894} ["1", "EPIC", "Epic 1", "IN_PROGRESS", "Epic 1 descript...", +2 more]
      * Метод создания таски из строки, реализована логика для создания эпиков и сабтасок
      */
     public static Task fromString(String value) {
@@ -34,7 +35,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         Task taskToReturn = null;
 
         if (TaskType.valueOf(array[1]).equals(TaskType.SUBTASK)) {
-            if(array[6].equals("null") && array[7].equals("0")) {
+            if (array[6].equals("null") && array[7].equals("0")) {
                 duration = 0L;
                 startTime = null;
             } else {
@@ -42,7 +43,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 startTime = LocalDateTime.parse(array[6]);
             }
         } else {
-            if(array[5].equals("null") && array[6].equals("0")) {
+            if (array[5].equals("null") && array[6].equals("0")) {
                 duration = 0L;
                 startTime = null;
             } else {
@@ -89,8 +90,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                     "," + ((Subtask) task).getStatus() +
                     "," + ((Subtask) task).getDescription() +
                     "," + ((Subtask) task).getEpicId() +
-                    "," + ((Subtask)task).getStartTime() +
-                    "," + ((Subtask)task).getDuration();;
+                    "," + ((Subtask) task).getStartTime() +
+                    "," + ((Subtask) task).getDuration();
+            ;
         }
         return str;
     }

@@ -1,10 +1,8 @@
 package ru.yandex.praktikum.http;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import ru.yandex.praktikum.manager.FileBackedTasksManager;
 import ru.yandex.praktikum.manager.Managers;
 import ru.yandex.praktikum.manager.TaskManager;
 import ru.yandex.praktikum.tasks.Epic;
@@ -13,9 +11,7 @@ import ru.yandex.praktikum.tasks.Task;
 import ru.yandex.praktikum.tasks.TaskStatus;
 
 import java.io.IOException;
-import java.net.HttpRetryException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

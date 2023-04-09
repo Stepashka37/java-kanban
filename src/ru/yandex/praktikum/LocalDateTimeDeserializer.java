@@ -8,7 +8,6 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 public class LocalDateTimeDeserializer implements JsonDeserializer<LocalDateTime> {
     @Override

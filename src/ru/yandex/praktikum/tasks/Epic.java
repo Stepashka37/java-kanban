@@ -7,10 +7,11 @@
 package ru.yandex.praktikum.tasks;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
-    public  List<Subtask> subtasksId = new ArrayList<>();
+    public List<Subtask> subtasksId = new ArrayList<>();
     protected LocalDateTime endTime;
 
 
@@ -21,7 +22,7 @@ public class Epic extends Task {
 
     public Epic(int id, String name, String description, TaskStatus status, long duration, LocalDateTime startTime) {
         super(id, name, description, status, duration, startTime);
-        this.endTime= startTime;
+        this.endTime = startTime;
         this.type = TaskType.EPIC;
     }
 

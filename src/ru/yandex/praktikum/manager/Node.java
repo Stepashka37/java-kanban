@@ -1,10 +1,12 @@
-/** Класс реализующий узел связного списка */
+/**
+ * Класс реализующий узел связного списка
+ */
 
 package ru.yandex.praktikum.manager;
 
 import ru.yandex.praktikum.tasks.Task;
 
-public class Node  {
+public class Node {
     public Task data;
     public Node next;
     public Node prev;
