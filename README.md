@@ -1,6 +1,6 @@
 
 # Java Task Tracker
-<p align="right">
+<p align="left">
       <img src="https://cdn0.iconfinder.com/data/icons/ios-web-user-interface-3d-square-vol-4/96/Checklist_clipboard_inventory_list_report_tasks_todo-1024.png" width="80">
 </p>
 
